@@ -2,19 +2,17 @@ import { Router } from 'express';
 
 
 const paymentRouter = Router();
-/**
- * @route payment/:userID ..
- */
-paymentRouter.get("/:userId?start_dt={}?end_dt{}",(req,res)=>{
-    res.sendStatus(404);
-})
 
-paymentRouter.post("/http://localhost:4000/payment",(req,res)=>{
-    const { userId, reference, amount } = req.body;
-    console.log("Received payment data:", { userId, reference, amount });
-
-
-}
+paymentRouter.post("/",(req,res)=>{
+    const { user_id, reference, amount } = req.body;
+    console.log("Received payment data:", { user_id, reference, amount });
+    if (!user_id || !reference || !amount) {
+        return res.status(400).json({ success: false, message: "Missing required payment fields" });
+    }
+    else {
+        res.status(200).json({ success: true, user_id, reference, amount });
+    }
+});
 
 export default paymentRouter;
 

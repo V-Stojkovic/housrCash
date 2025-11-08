@@ -25,7 +25,7 @@ if st.button("Generate Payment Event"):
 
                 # 3. Send the payment data to the backend API.
                 try:
-                    response = requests.post("http://localhost:4000/payments", json=payment_data)
+                    response = requests.post("http://localhost:4000/api/v0/payment", json=payment_data)
                     if response.status_code == 200:
                         st.success("Payment processed successfully!")
                     else:

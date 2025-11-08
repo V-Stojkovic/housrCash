@@ -1,8 +1,8 @@
 import http from 'http';
 import app from './app';
 
-// Use an environment variable for flexibility, fallback to 3000
-const PORT = process.env.PORT || 3000;
+// Use an environment variable for flexibility, fallback to 4000
+const PORT = process.env.PORT || 4000;
 
 // creating the server explicitly with 'http' module is good practice
 // as it makes it easier to attach other protocols later (like WebSockets)

@@ -3,6 +3,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+
+
 const access: PoolOptions = {
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
