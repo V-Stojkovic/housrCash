@@ -17,11 +17,11 @@ export const RewardCard: React.FC<RewardCardProps> = ({ reward }) => {
         onError={(e) => (e.currentTarget.src = 'https://placehold.co/600x400/cccccc/FFFFFF?text=Image+Error')}
       />
       <CardHeader>
-        <CardDescription className="text-indigo-600 font-semibold">{reward.vendor}</CardDescription>
+        <CardDescription className="text-primary font-semibold">{reward.vendor}</CardDescription>
         <CardTitle>{reward.title}</CardTitle>
       </CardHeader>
       <CardContent className="flex-1">
-        <p className="text-lg font-bold text-gray-700">{reward.points.toLocaleString()} pts</p>
+        <p className="text-lg font-bold text-foreground">{reward.points.toLocaleString()} pts</p>
       </CardContent>
       <CardFooter>
         <Button className="w-full">Redeem Now</Button>

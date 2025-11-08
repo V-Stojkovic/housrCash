@@ -17,9 +17,9 @@ const navItems = [
 
 export const Sidebar: React.FC<NavProps> = ({ currentPage, setCurrentPage }) => {
   return (
-    <nav className="hidden md:flex md:flex-col md:w-64 bg-white shadow-lg border-r border-gray-200">
-      <div className="flex items-center justify-center h-16 border-b border-gray-200">
-        <h1 className="text-2xl font-bold text-indigo-600">HousrCash</h1>
+    <nav className="hidden md:flex md:flex-col md:w-64 bg-card shadow-lg border-r border-border">
+      <div className="flex items-center justify-center h-16 border-b border-border">
+        <h1 className="text-2xl font-bold text-primary">HousrCash</h1>
       </div>
       <div className="flex-1 overflow-y-auto">
         <ul className="flex flex-col py-4 space-y-1">
