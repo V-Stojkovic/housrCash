@@ -47,7 +47,7 @@ Before you begin, ensure you have met the following requirements:
     ```bash
     npm run dev
     ```
-    The server will start at `http://localhost:3000`.
+    The server will start at `http://localhost:4000`.
 
 * **Production Build:**
     ```bash
