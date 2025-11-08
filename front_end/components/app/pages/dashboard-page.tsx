@@ -1,10 +1,11 @@
 import React from 'react';
 import { Card, CardTitle, CardHeader, CardContent, CardDescription } from '@/components/ui/card';
 import { Gift, ShoppingCart, Award } from 'lucide-react';
-import { MOCK_PAYMENTS, MOCK_REDEMPTIONS } from '@/lib/mock-data';
+import { MOCK_BALANCE, MOCK_PAYMENTS, MOCK_REDEMPTIONS, MOCK_REWARDS } from '@/lib/mock-data';
+import { RewardCard } from '../rewards/reward-card';
 
 export const DashboardPage: React.FC = () => {
-  const totalPoints = MOCK_PAYMENTS.reduce((sum, p) => sum + p.pointsEarned, 0) - MOCK_REDEMPTIONS.reduce((sum, r) => sum + r.pointsSpent, 0);
+  const totalPoints = MOCK_BALANCE;
   
   return (
     <div className="space-y-6">
@@ -22,8 +23,16 @@ export const DashboardPage: React.FC = () => {
         </CardHeader>
       </Card>
 
-      <h3 className="text-2xl font-semibold text-foreground/90">Recent Activity</h3>
-      <Card>
+    
+    <h2 className="text-3xl font-bold text-gray-800">Favourite Rewards</h2>
+    <p className="text-lg text-gray-600">See how close you are to reaching your goals!</p>
+
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {MOCK_REWARDS.map(reward => (
+        <RewardCard key={reward.id} reward={reward} balance={MOCK_BALANCE}/>
+      ))}
+    </div>
+   <Card>
         <CardContent className="p-4 space-y-4">
           {MOCK_PAYMENTS.slice(0, 2).map(payment => (
             <div key={payment.id} className="flex items-center justify-between">

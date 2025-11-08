@@ -5,9 +5,10 @@ import { Reward } from '@/lib/types';
 
 interface RewardCardProps {
   reward: Reward;
+  balance?: number;
 }
 
-export const RewardCard: React.FC<RewardCardProps> = ({ reward }) => {
+export const RewardCard: React.FC<RewardCardProps> = ({ reward, balance }) => {
   return (
     <Card className="overflow-hidden flex flex-col">
       <img 
@@ -21,7 +22,7 @@ export const RewardCard: React.FC<RewardCardProps> = ({ reward }) => {
         <CardTitle>{reward.title}</CardTitle>
       </CardHeader>
       <CardContent className="flex-1">
-        <p className="text-lg font-bold text-foreground">{reward.points.toLocaleString()} pts</p>
+        <p className="text-lg font-bold text-foreground">{balance ? (Math.max(0, reward.points - balance)).toLocaleString(): reward.points.toLocaleString()} pts {balance ? 'to go': ''}</p>
       </CardContent>
       <CardFooter>
         <Button className="w-full">Redeem Now</Button>
