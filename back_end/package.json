@@ -4,7 +4,8 @@
   "description": "Server package for housrCash",
   "main": "index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "db:init": "npx ts-node DBHelpers/db_init.ts"
   },
   "repository": {
     "type": "git",
@@ -18,10 +19,12 @@
   "homepage": "https://github.com/V-Stojkovic/housrCash#readme",
   "dependencies": {
     "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "helmet": "^8.1.0",
     "list": "^2.0.19",
-    "morgan": "^1.10.1"
+    "morgan": "^1.10.1",
+    "mysql2": "^3.15.3"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",

@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "es2018",           // Standard Node.js target
+    "module": "commonjs",         // VITAL: Converts 'import' to 'require' for Node
+    "rootDir": "./",
+    "outDir": "./dist",
+    "esModuleInterop": true,      // Allows standard imports for CommonJS modules
+    "strict": true,               // Enables strict type checking
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src/**/*", "DBHelpers/**/*"], // Make sure DBHelpers is included!
+  "exclude": ["node_modules"]
+}
