@@ -3,6 +3,7 @@
 import React, { useState, useMemo, createContext, useContext } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { Card, CardTitle, CardHeader, CardContent, CardDescription, CardFooter } from '@/components/ui/card';
 // --- ICONS ---
 // We'll use lucide-react for icons.
 import { 
@@ -89,59 +90,6 @@ const MOCK_REDEMPTIONS: Redemption[] = [
 // created by the shadcn/ui CLI (e.g., '@/components/ui/button')
 
 /**
- * Card Components (Mimic shadcn/ui)
- */
-const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className = '', ...props }, ref) => (
-    <div
-      ref={ref}
-      className={`rounded-lg border bg-white text-gray-950 shadow-sm ${className}`}
-      {...props}
-    />
-  )
-);
-Card.displayName = 'Card';
-
-const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className = '', ...props }, ref) => (
-    <div ref={ref} className={`flex flex-col space-y-1.5 p-6 ${className}`} {...props} />
-  )
-);
-CardHeader.displayName = 'CardHeader';
-
-const CardTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement>>(
-  ({ className = '', ...props }, ref) => (
-    <h3
-      ref={ref}
-      className={`text-lg font-semibold leading-none tracking-tight ${className}`}
-      {...props}
-    />
-  )
-);
-CardTitle.displayName = 'CardTitle';
-
-const CardDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
-  ({ className = '', ...props }, ref) => (
-    <p ref={ref} className={`text-sm text-gray-500 ${className}`} {...props} />
-  )
-);
-CardDescription.displayName = 'CardDescription';
-
-const CardContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className = '', ...props }, ref) => (
-    <div ref={ref} className={`p-6 pt-0 ${className}`} {...props} />
-  )
-);
-CardContent.displayName = 'CardContent';
-
-const CardFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className = '', ...props }, ref) => (
-    <div ref={ref} className={`flex items-center p-6 pt-0 ${className}`} {...props} />
-  )
-);
-CardFooter.displayName = 'CardFooter';
-
-/**
  * Tabs Components (Mimic shadcn/ui)
  */
 type TabsContextType = {
@@ -220,7 +168,7 @@ const Sidebar: React.FC<NavProps> = ({ currentPage, setCurrentPage }) => {
   return (
     <nav className="hidden md:flex md:flex-col md:w-64 bg-white shadow-lg border-r border-gray-200">
       <div className="flex items-center justify-center h-16 border-b border-gray-200">
-        <h1 className="text-2xl font-bold text-indigo-600">RewardsPay</h1>
+        <h1 className="text-2xl font-bold text-indigo-600">HousrCash</h1>
       </div>
       <div className="flex-1 overflow-y-auto">
         <ul className="flex flex-col py-4 space-y-1">
