@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { getPasswordHash } from '../../../../DBHelpers/db_helpers';
+import { getId, getPasswordHash } from '../../../../DBHelpers/db_helpers';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
@@ -36,6 +36,7 @@ export const authUser = async (
     try {
         const { username, password_string } = req.body;
 
+
         // 1. Find user in DB
         const user = await getPasswordHash(username);
 
@@ -52,7 +53,6 @@ export const authUser = async (
              return res.status(401).json({ success: false, message: 'Invalid credentials' });
         }
 
-        // 4. Generate JWT Token
         // This token will be sent with every future request to prove who they are
         const token = jwt.sign(
             { userId: user.id, username: user.username }, // Payload (data to include in token)
@@ -61,14 +61,11 @@ export const authUser = async (
         );
 
         // 5. Success response
-        res.json({
-            success: true,
+        res.status(200)
+        .cookie("auth-token",token)
+        .json({
             message: 'Authentication successful',
-            token: token,
-            user: {
-                id: user.id,
-                username: user.username
-            }
+            userId: user.id
         });
 
     } catch (error) {

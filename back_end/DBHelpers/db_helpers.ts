@@ -22,6 +22,13 @@ interface PasswordResult extends RowDataPacket {
 interface IdResult extends RowDataPacket{
     id: number;
 }
+
+interface paymentDTO{
+    username:string,
+    reference:string,
+    timestamp:number
+
+}
 export interface UserAuthData extends RowDataPacket {
     id: number;
     username: string;
@@ -57,7 +64,6 @@ export const createUser = async (userData: CreateUserDTO): Promise<number> => {
 
 export const getPasswordHash = async (username?: string, email?: string): Promise<UserAuthData | null> => {
     let sql = 'SELECT password_hash,salt,userId FROM user WHERE ';
-    let searchParam:string;
     if (username) {
         sql += 'username = ?';
     } else if (email) {
@@ -82,3 +88,7 @@ export const getId = async (username: string): Promise<number | null> =>{
 //=================================
 // Payments
 //=================================
+export const addPayment = async (payment : paymentDTO):Promise<number> => {
+    const sql = 'INSERT '
+    return 0;
+}

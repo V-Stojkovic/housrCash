@@ -37,7 +37,7 @@ app.use((req: Request, res: Response) => {
 });
 
 
-// 4. Global Error Handler
+
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     console.error('Error:', err.stack); // Log the error for debugging
 
