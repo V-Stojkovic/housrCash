@@ -3,14 +3,14 @@ import requests
 
 st.title("Payment Generator")
 
-user_name = st.text_input("Username")
+user_id = st.text_input("User ID")
 reference = st.text_input("Reference")
 amount = st.text_input("Amount in GBP")
 
 
 if st.button("Generate Payment Event"):
     # 1. Validate inputs.
-    if not (user_name and reference and amount):
+    if not (user_id and reference and amount):
         st.toast("⚠️ All fields are required. Please fill them in.", icon="⚠️")
     else:
         try:
@@ -19,13 +19,13 @@ if st.button("Generate Payment Event"):
                 st.toast("⚠️ Amount must be a positive number.", icon="⚠️")
             else:
                 # 2. On success, generate the event.
-                payment_data = {"username": user_name,
+                payment_data = {"user_id": user_id,
                                 "reference": reference, "amount": amount}
                 st.json(payment_data)
 
                 # 3. Send the payment data to the backend API.
                 try:
-                    response = requests.post("http://localhost:8080/api/v0/payments", json=payment_data)
+                    response = requests.post("http://localhost:4000/payments", json=payment_data)
                     if response.status_code == 200:
                         st.success("Payment processed successfully!")
                     else:
