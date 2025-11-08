@@ -11,10 +11,10 @@ async function initDB() {
     });
 
     try {
-        console.log('🔄 Initializing database...');
+        console.log(' Initializing database...');
 
         await connection.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME}\`;`);
-        console.log(`✅ Database ${process.env.DB_NAME} checked/created.`);
+        console.log(`Database ${process.env.DB_NAME} checked/created.`);
 
         await connection.changeUser({ database: process.env.DB_NAME });
 
@@ -36,7 +36,7 @@ async function initDB() {
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         `);
-        console.log('👍 Table "user" checked/created.');
+        console.log('Table "user" checked/created.');
 
         // Category Table (referenced by reward)
         await connection.query(`
@@ -45,7 +45,7 @@ async function initDB() {
                 name VARCHAR(100) NOT NULL UNIQUE
             );
         `);
-         console.log('👍 Table "category" checked/created.');
+         console.log('Table "category" checked/created.');
 
         // =========================================
         // 2. DEPENDENT TABLES (Has Foreign Keys)
@@ -63,7 +63,7 @@ async function initDB() {
                 FOREIGN KEY (categoryId) REFERENCES category(id) ON DELETE SET NULL
             );
         `);
-        console.log('👍 Table "reward" checked/created.');
+        console.log(' Table "reward" checked/created.');
 
         // Payment Table
         // NOTE: removed reference to missing 'payment_history' table for now.
@@ -79,7 +79,7 @@ async function initDB() {
                 FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE
             );
         `);
-        console.log('👍 Table "payment" checked/created.');
+        console.log('Table "payment" checked/created.');
 
         // Redeemed Rewards
         await connection.query(`
@@ -107,12 +107,12 @@ async function initDB() {
                 UNIQUE KEY unique_fav (userId, rewardId)
             );
         `);
-        console.log('👍 Table "favourite_rewards" checked/created.');
+        console.log('Table "favourite_rewards" checked/created.');
 
-        console.log('🚀 --- Database initialization complete! ---');
+        console.log('--- Database initialization complete! ---');
         process.exit(0);
     } catch (error) {
-        console.error('❌ Error initializing database:', error);
+        console.error(' Error initializing database:', error);
         process.exit(1);
     } finally {
         await connection.end();

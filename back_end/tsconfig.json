@@ -9,6 +9,6 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*", "DBHelpers/**/*"], // Make sure DBHelpers is included!
+  "include": ["src/**/*", "DBHelpers/**/*"],
   "exclude": ["node_modules"]
 }

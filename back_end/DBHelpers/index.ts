@@ -1,7 +1,7 @@
 import mysql, { Pool, PoolOptions } from 'mysql2/promise';
 import dotenv from 'dotenv';
 
-dotenv.config(); // Ensure env vars are loaded
+dotenv.config();
 
 const access: PoolOptions = {
     host: process.env.DB_HOST,
@@ -10,8 +10,8 @@ const access: PoolOptions = {
     database: process.env.DB_NAME,
     port: Number(process.env.DB_PORT) || 3306,
     waitForConnections: true,
-    connectionLimit: 10, // Max concurrent connections
-    queueLimit: 0 // Unlimited queueing of requests
+    connectionLimit: 10,
+    queueLimit: 0
 };
 
 // Create the pool
@@ -20,11 +20,11 @@ const pool: Pool = mysql.createPool(access);
 // Optional: Test connection on startup
 pool.getConnection()
     .then(connection => {
-        console.log('✅ MySQL Database connected successfully');
-        connection.release(); // Always release the connection back to the pool!
+        console.log('MySQL Database connected successfully');
+        connection.release();
     })
     .catch(err => {
-        console.error('❌ MySQL Connection Error:', err.message);
+        console.error('MySQL Connection Error:', err.message);
     });
 
 export default pool;
