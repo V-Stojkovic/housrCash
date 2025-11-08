@@ -1,7 +1,8 @@
 "use client"
 
-import { handleSignIn, handleSignOut } from '../../lib/auth';
+import { handleGoogleSignIn, handleSignOut } from '../../lib/auth';
 import { useSession } from 'next-auth/react';
+import { LoginForm } from '@/components/login-form';
 
 export default function HomePage() {
   const { data: session } = useSession();
@@ -21,12 +22,12 @@ export default function HomePage() {
           </button>
         </div>
       ) : (
-        <button
-          onClick={handleSignIn}
-          className="px-6 py-3 text-white bg-blue-600 rounded-lg hover:bg-blue-700"
-        >
-          Sign in with Google
-        </button>
+        
+    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
+      <div className="w-full max-w-sm">
+        <LoginForm />
+      </div>
+    </div>
       )}
     </main>
   );
