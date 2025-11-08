@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { getId, getPasswordHash } from '../../../../DBHelpers/db_helpers';
+import { getId, getPasswordHash, createUser as dbCreateUser } from '../../../../DBHelpers/db_helpers';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
@@ -7,6 +7,10 @@ import jwt from 'jsonwebtoken';
 interface CreateUserDTO {
     username: string;
     email: string;
+    password: string;
+    firstName: string;
+    surname: string;
+    balance?: number
 }
 
 interface AuthenticateUserDTO{
@@ -16,14 +20,39 @@ interface AuthenticateUserDTO{
 
 export const createUser = async (req: Request<{}, {}, CreateUserDTO>, res: Response, next: NextFunction) => {
     try {
-        const { username, email } = req.body;
-        // ... logic to save user to DB ...
-        
+        const { username, email, password, firstName, surname } = req.body;
+
+        // Basic validation
+        if (!username || !email || !password || !firstName || !surname) {
+            return res.status(400).json({ success: false, message: 'Missing required fields' });
+        }
+
+        // Generate salt and hash the password
+        const salt = await bcrypt.genSalt(10);
+        const password_hash = await bcrypt.hash(password, salt);
+
+        // Persist to DB using helper
+        const newUserId = await dbCreateUser({
+            username,
+            email,
+            firstName,
+            surname,
+            password_hash,
+            salt
+        });
+
         res.status(201).json({
             success: true,
-            data: { id: 123, username, email }
+            data: { id: newUserId, username, email }
         });
     } catch (error) {
+        // mysql2 throws an error with code 'ER_DUP_ENTRY' for unique constraint violations
+        // Type 'any' here because error shape can vary
+        const err: any = error;
+        if (err && err.code === 'ER_DUP_ENTRY') {
+            return res.status(409).json({ success: false, message: 'Username or email already exists' });
+        }
+
         next(error);
     }
 };

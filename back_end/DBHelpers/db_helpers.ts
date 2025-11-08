@@ -16,10 +16,13 @@ interface CreateUserDTO {
 }
 // Define the expected result shape
 interface PasswordResult extends RowDataPacket {
+    id: number;
+    username: string;
     password_hash: string;
+    salt?: string;
 }
 
-interface IdResult extends RowDataPacket{
+interface IdResult extends RowDataPacket {
     id: number;
 }
 
@@ -62,28 +65,20 @@ export const createUser = async (userData: CreateUserDTO): Promise<number> => {
     return result.insertId;
 };
 
-export const getPasswordHash = async (username?: string, email?: string): Promise<UserAuthData | null> => {
-    let sql = 'SELECT password_hash,salt,userId FROM user WHERE ';
-    if (username) {
-        sql += 'username = ?';
-    } else if (email) {
-        sql += 'email = ?';
-    } else {
-        // Neither was provided
-        return null;
-    }
-    const [rows] = await pool.query<UserAuthData[]>(sql, [username ? username : email]);
-        // Return the hash if found, otherwise null
-        return rows.length > 0 ? rows[0]: null;
+export const getPasswordHash = async (identifier?: string): Promise<UserAuthData | null> => {
+    // Accept a single identifier (username or email) and try to find a matching user.
+    if (!identifier) return null;
+
+    const sql = 'SELECT id, username, password_hash, salt FROM user WHERE username = ? OR email = ? LIMIT 1';
+    const [rows] = await pool.query<UserAuthData[]>(sql, [identifier, identifier]);
+    return rows.length > 0 ? rows[0] : null;
 };
 
-export const getId = async (username: string): Promise<number | null> =>{
-    const sql = 'SELECT id FROM user WHERE userName = ?';
-
-    const[rows] = await pool.query<IdResult[]>(sql,[username]);
-
+export const getId = async (username: string): Promise<number | null> => {
+    const sql = 'SELECT id FROM user WHERE username = ?';
+    const [rows] = await pool.query<IdResult[]>(sql, [username]);
     return rows.length > 0 ? rows[0].id : null;
-}
+};
 
 //=================================
 // Payments
