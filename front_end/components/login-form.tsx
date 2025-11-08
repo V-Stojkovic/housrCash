@@ -14,7 +14,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { loginEndpoint, handleGoogleSignIn } from "@/lib/auth"
+import { handleSignIn, handleGoogleSignIn } from "@/lib/auth"
 
 export function LoginForm({
   className,
@@ -30,7 +30,7 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={login}>
+          <form>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -54,7 +54,7 @@ export function LoginForm({
                 <Input id="password" type="password" required />
               </Field>
               <Field>
-                <Button type="submit">Login</Button>
+                <Button type="button" onClick={handleSignIn}>Login</Button>
                 <Button variant="outline" type="button" onClick={handleGoogleSignIn}>
                   Login with Google
                 </Button>
