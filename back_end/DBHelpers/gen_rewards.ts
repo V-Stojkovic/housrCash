@@ -1,11 +1,11 @@
-// File: seed.ts
+// File: gen_rewards.ts
 //
-// This script seeds the database with dummy data for 'category' and 'reward'.
+// This script gen_rewardss the database with dummy data for 'category' and 'reward'.
 // It's designed to be run after 'initDB.ts' has created the tables.
 //
 // How to run:
 // 1. Make sure your .env file is set up.
-// 2. Run: npx ts-node seed.ts
+// 2. Run: npx ts-node gen_rewards.ts
 //
 import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';

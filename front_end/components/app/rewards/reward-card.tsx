@@ -13,7 +13,7 @@ interface RewardCardProps {
   onRedeemSuccess?: () => void;
 }
 
-const BACKEND_BASE = "http://localhost:4000";
+
 
 export const RewardCard: React.FC<RewardCardProps> = ({ reward, balance, onRedeemSuccess }) => {
   const [isRedeeming, setIsRedeeming] = useState(false);
@@ -29,7 +29,7 @@ export const RewardCard: React.FC<RewardCardProps> = ({ reward, balance, onRedee
     setIsRedeeming(true);
 
     try {
-      const response = await fetch(`${BACKEND_BASE}/api/v0/redeem/${userId}/${reward.id}`, {
+      const response = await fetch(`/api/v0/redeem/${userId}/${reward.id}`, {
         method: 'GET',
       });
 

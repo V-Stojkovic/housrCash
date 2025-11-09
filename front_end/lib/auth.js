@@ -9,7 +9,7 @@ const BACKEND_BASE = "http://localhost:4000"
 export const handleGoogleSignIn = () => {
   // Redirect the browser to the backend OAuth start endpoint
   if (typeof window !== 'undefined') {
-    window.location.href = `${BACKEND_BASE}/api/v0/auth/google`;
+    window.location.href = `/api/v0/auth/google`;
   }
 };
 
@@ -149,7 +149,7 @@ export const handleSignUp = async (userData, router, redirectTo = '/') => {
 export const handleSignOut = async () => {
   // Call backend logout endpoint
   try {
-    await fetch(`${BACKEND_BASE}/api/v0/user/logout`, {
+    await fetch(`/api/v0/user/logout`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

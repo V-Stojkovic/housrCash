@@ -7,7 +7,7 @@ import { getCurrentUserId } from '@/lib/auth';
 import { TrendingUp, TrendingDown, Check } from 'lucide-react';
 import { toast } from 'sonner';
 
-const BACKEND_BASE = "http://localhost:4000";
+
 
 interface Debt {
   transactionId: number;
@@ -44,7 +44,7 @@ export const DebtBreakdown: React.FC = () => {
 
     try {
       // Fetch what user owes
-      const debtsResponse = await fetch(`${BACKEND_BASE}/api/v0/group/user/${userId}/owes`);
+      const debtsResponse = await fetch(`/api/v0/group/user/${userId}/owes`);
       const debtsData = await debtsResponse.json();
 
       if (debtsData.success) {
@@ -53,7 +53,7 @@ export const DebtBreakdown: React.FC = () => {
       }
 
       // Fetch what user is owed
-      const creditsResponse = await fetch(`${BACKEND_BASE}/api/v0/group/user/${userId}/owed`);
+      const creditsResponse = await fetch(`/api/v0/group/user/${userId}/owed`);
       const creditsData = await creditsResponse.json();
 
       if (creditsData.success) {
@@ -78,7 +78,7 @@ export const DebtBreakdown: React.FC = () => {
     setUpdatingPayment(transactionId);
 
     try {
-      const response = await fetch(`${BACKEND_BASE}/api/v0/group/transaction/${transactionId}/mark-paid`, {
+      const response = await fetch(`/api/v0/group/transaction/${transactionId}/mark-paid`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

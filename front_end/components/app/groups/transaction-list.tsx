@@ -7,7 +7,7 @@ import { getCurrentUserId } from '@/lib/auth';
 import { toast } from 'sonner';
 import { DollarSign, X } from 'lucide-react';
 
-const BACKEND_BASE = "http://localhost:4000";
+
 
 interface Transaction {
   id: number;
@@ -31,7 +31,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({ groupId, onUpd
 
   const fetchTransactions = React.useCallback(async () => {
     try {
-      const response = await fetch(`${BACKEND_BASE}/api/v0/group/${groupId}/transactions`);
+      const response = await fetch(`/api/v0/group/${groupId}/transactions`);
       const data = await response.json();
 
       if (data.success) {
@@ -59,7 +59,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({ groupId, onUpd
     setClosingId(transactionId);
 
     try {
-      const response = await fetch(`${BACKEND_BASE}/api/v0/group/transaction/${transactionId}/close`, {
+      const response = await fetch(`/api/v0/group/transaction/${transactionId}/close`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: parseInt(userId) })

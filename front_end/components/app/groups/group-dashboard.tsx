@@ -12,7 +12,7 @@ import { getCurrentUserId } from '@/lib/auth';
 import { generateInviteCode } from '@/lib/invite-code';
 import { toast } from 'sonner';
 
-const BACKEND_BASE = "http://localhost:4000";
+
 
 interface GroupData {
   group: {
@@ -72,7 +72,7 @@ export const GroupDashboard: React.FC<GroupDashboardProps> = ({ groupData, onUpd
     setLeaving(true);
 
     try {
-      const response = await fetch(`${BACKEND_BASE}/api/v0/group/leave/${userId}`, {
+      const response = await fetch(`/api/v0/group/leave/${userId}`, {
         method: 'POST'
       });
 

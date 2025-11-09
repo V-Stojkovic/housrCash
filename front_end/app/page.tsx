@@ -3,8 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardTitle, CardHeader, CardContent, CardDescription } from '@/components/ui/card';
 import { Gift, ShoppingCart } from 'lucide-react';
-import { MOCK_PAYMENTS, MOCK_REWARDS } from '@/lib/mock-data';
-import { RewardCard } from '@/components/app/rewards/reward-card';
+import { MOCK_PAYMENTS } from '@/lib/mock-data';
 import { getCurrentUserId } from '@/lib/auth';
 
 export default function DashboardPage() {
@@ -24,7 +23,7 @@ export default function DashboardPage() {
           throw new Error('User not authenticated. Please log in.');
         }
 
-        const response = await fetch(`http://localhost:4000/api/v0/user/balance/${userId}`);
+        const response = await fetch(`/api/v0/user/balance/${userId}`);
         
         if (!response.ok) {
           throw new Error(`Failed to fetch balance: ${response.status}`);

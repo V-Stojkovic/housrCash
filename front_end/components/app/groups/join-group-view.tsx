@@ -7,7 +7,7 @@ import { Field, FieldLabel } from '@/components/ui/field';
 import { getCurrentUserId } from '@/lib/auth';
 import { toast } from 'sonner';
 
-const BACKEND_BASE = "http://localhost:4000";
+
 
 interface JoinGroupViewProps {
   onGroupJoined: () => void;
@@ -32,7 +32,7 @@ export const JoinGroupView: React.FC<JoinGroupViewProps> = ({ onGroupJoined }) =
     setLoading(true);
 
     try {
-      const response = await fetch(`${BACKEND_BASE}/api/v0/group/join`, {
+      const response = await fetch(`/api/v0/group/join`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -8,7 +8,7 @@ import { getCurrentUserId } from '@/lib/auth';
 import { toast } from 'sonner';
 import { Copy, Check } from 'lucide-react';
 
-const BACKEND_BASE = "http://localhost:4000";
+
 
 interface CreateGroupViewProps {
   onGroupCreated: () => void;
@@ -35,7 +35,7 @@ export const CreateGroupView: React.FC<CreateGroupViewProps> = ({ onGroupCreated
     setLoading(true);
 
     try {
-      const response = await fetch(`${BACKEND_BASE}/api/v0/group/create`, {
+      const response = await fetch(`/api/v0/group/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
