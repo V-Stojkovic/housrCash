@@ -58,7 +58,7 @@ async function initDB() {
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 title VARCHAR(255) NOT NULL,
                 description TEXT,
-                points_required INT NOT NULL,
+                cost INT NOT NULL,
                 image_url VARCHAR(500),
                 is_active BOOLEAN DEFAULT TRUE,
                 redemptions INT DEFAULT 0,
