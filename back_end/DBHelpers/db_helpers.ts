@@ -53,8 +53,8 @@ export const createUser = async (userData: CreateUserDTO): Promise<number> => {
 
     // 1. Define the SQL with '?' placeholders.
     const sql = `
-        INSERT INTO user (email, firstName, password_hash, salt)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO user (email, firstName, password_hash)
+        VALUES (?, ?, ?)
     `;
 
     // 2. Execute Query
