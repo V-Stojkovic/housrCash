@@ -4,6 +4,72 @@ import { RowDataPacket, ResultSetHeader } from 'mysql2';
 
 const redeemRouter = Router();
 
+// Get redemption history for a user
+redeemRouter.get("/history/:user_id", async (req, res) => {
+    const { user_id } = req.params;
+    const { start, end } = req.query;
+
+    try {
+        // Build the query with optional date filters
+        let query = `
+            SELECT 
+                rr.id,
+                rr.userId,
+                rr.rewardId,
+                rr.timestamp,
+                r.title,
+                r.description,
+                r.cost
+            FROM redeemed_rewards rr
+            JOIN reward r ON rr.rewardId = r.id
+            WHERE rr.userId = ?
+        `;
+        
+        const params: any[] = [user_id];
+
+        // Add date range filters if provided
+        if (start) {
+            query += ' AND rr.timestamp >= ?';
+            params.push(start);
+        }
+
+        if (end) {
+            query += ' AND rr.timestamp <= ?';
+            params.push(end);
+        }
+
+        query += ' ORDER BY rr.timestamp DESC';
+
+        const [rows] = await pool.query<RowDataPacket[]>(query, params);
+
+        res.status(200).json({
+            success: true,
+            data: {
+                userId: user_id,
+                count: rows.length,
+                redemptions: rows.map(row => ({
+                    id: row.id,
+                    rewardId: row.rewardId,
+                    timestamp: row.timestamp,
+                    reward: {
+                        title: row.title,
+                        description: row.description,
+                        cost: row.cost,
+                    }
+                }))
+            }
+        });
+
+    } catch (error) {
+        console.error('Error fetching redemption history:', error);
+        res.status(500).json({
+            success: false,
+            message: "An error occurred while fetching redemption history"
+        });
+    }
+});
+
+// Redeem a reward
 redeemRouter.get("/:user_id/:reward_id", async (req, res) => {
     const { user_id, reward_id } = req.params;
 
