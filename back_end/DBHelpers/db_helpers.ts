@@ -83,7 +83,7 @@ export const getPasswordHash = async (email?: string): Promise<UserAuthData | nu
     // Accept an email and try to find a matching user
     if (!email) return null;
 
-    const sql = 'SELECT id, password_hash, salt FROM user WHERE email = ? LIMIT 1';
+    const sql = 'SELECT id, password_hash FROM user WHERE email = ? LIMIT 1';
     const [rows] = await pool.query<UserAuthData[]>(sql, [email]);
     return rows.length > 0 ? rows[0] : null;
 };

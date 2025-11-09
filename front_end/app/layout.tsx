@@ -6,6 +6,7 @@ import { Sidebar } from '@/components/app/navigation/sidebar';
 import { BottomNav } from '@/components/app/navigation/bottom-nav';
 import { Toaster } from 'sonner';
 
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],

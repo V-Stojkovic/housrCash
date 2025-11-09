@@ -68,12 +68,6 @@ export const RewardCard: React.FC<RewardCardProps> = ({ reward, balance, onRedee
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <img 
-        src={reward.imageUrl} 
-        alt={reward.title} 
-        className="w-full h-40 object-cover"
-        onError={(e) => (e.currentTarget.src = 'https://placehold.co/600x400/cccccc/FFFFFF?text=Image+Error')}
-      />
       <CardHeader>
         <CardDescription className="text-primary font-semibold">{reward.vendor}</CardDescription>
         <CardTitle>{reward.title}</CardTitle>

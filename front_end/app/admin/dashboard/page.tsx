@@ -72,7 +72,6 @@ export default function AdminDashboard() {
         }
         
         if (settingsData.success) {
-          console.log('Setting cashback rate:', settingsData.data.cashback_rate);
           setSettings({ cashback_rate: settingsData.data.cashback_rate });
         } else {
           console.error('Failed to fetch settings:', settingsData.message);
@@ -314,7 +313,7 @@ export default function AdminDashboard() {
                       className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground"
                     />
                   </div>
-
+{/* 
                   <div className="space-y-2 md:col-span-2">
                     <label className="text-sm font-medium text-foreground">Image URL (optional)</label>
                     <input
@@ -324,7 +323,7 @@ export default function AdminDashboard() {
                       placeholder="https://..."
                       className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground"
                     />
-                  </div>
+                  </div> */}
 
                   <div className="flex items-center space-x-2">
                     <input
@@ -392,29 +391,26 @@ export default function AdminDashboard() {
           <TabsContent value="settings" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Cashback Rate</CardTitle>
+                <CardTitle>Conversion Rate</CardTitle>
                 <CardDescription>
-                  Set the percentage of rent that converts to cashback points
+                  Set the conversion rate between pounds and cashback points
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-foreground">
-                      Cashback Rate (%)
+                      Conversion Rate
                     </label>
                     <div className="flex gap-4 items-center">
                       <input
                         type="number"
-                        step="0.1"
-                        min="0"
-                        max="100"
                         value={settings.cashback_rate}
                         onChange={(e) => setSettings({ ...settings, cashback_rate: Number(e.target.value) })}
                         className="w-32 px-3 py-2 border border-input rounded-md bg-background text-foreground"
                       />
                       <span className="text-sm text-muted-foreground">
-                        For every $100 rent paid, users earn ${settings.cashback_rate.toFixed(2)} in points
+                        For every £100 rent paid, users earn {settings.cashback_rate.toFixed(2) * 100} points
                       </span>
                     </div>
                   </div>
@@ -422,14 +418,14 @@ export default function AdminDashboard() {
                   <div className="p-4 bg-muted rounded-lg">
                     <h4 className="font-medium text-foreground mb-2">Examples:</h4>
                     <ul className="space-y-1 text-sm text-muted-foreground">
-                      <li>• $1,000 rent → {(settings.cashback_rate * 10).toFixed(2)} points</li>
-                      <li>• $1,500 rent → {(settings.cashback_rate * 15).toFixed(2)} points</li>
-                      <li>• $2,000 rent → {(settings.cashback_rate * 20).toFixed(2)} points</li>
+                      <li>• £1,000 rent → {(settings.cashback_rate * 1000).toFixed(2)} points</li>
+                      <li>• £1,500 rent → {(settings.cashback_rate * 1500).toFixed(2)} points</li>
+                      <li>• £2,000 rent → {(settings.cashback_rate * 2000).toFixed(2)} points</li>
                     </ul>
                   </div>
 
                   <Button onClick={handleSaveCashbackRate}>
-                    Save Cashback Rate
+                    Save Conversion Rate
                   </Button>
                 </div>
               </CardContent>
