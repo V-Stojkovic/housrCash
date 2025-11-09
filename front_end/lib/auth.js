@@ -6,6 +6,8 @@ export const API_BASE = (typeof process !== 'undefined' && process.env && proces
   : 'http://localhost:4000';
 console.log(`API BASE ${API_BASE}`);
 export const loginEndpoint = '/api/v0/user/login';
+export const signupEndpoint = '/api/v0/user/create';
+
 
 // Called on the frontend OAuth landing page
 export const processOAuthCallback = (router) => {
@@ -93,5 +95,48 @@ export const handleSignOut = async () => {
     // but best to let backend handle it or just rely on browser clearing it eventually.
     document.cookie = 'auth-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     window.location.href = '/login';
+  }
+};
+// handleSignUp(userData, router?, redirectTo?)
+// credentials should match backend expected shape: { email, password_string }
+export const handleSignUp = async (userData, router, redirectTo = '/') => {
+  try {
+    const response = await fetch(`${signupEndpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Signup failed' }));
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    // Save token and userId to localStorage if present
+    if (data.token) {
+      localStorage.setItem('housr_auth_token', data.token);
+    }
+    if (data.userId) {
+      localStorage.setItem(USER_ID_KEY, data.userId);
+    }
+
+    // If router provided, navigate client-side, otherwise fallback to full redirect
+    try {
+      if (router && typeof router.replace === 'function') {
+        router.replace(redirectTo);
+      } else if (typeof window !== 'undefined') {
+        window.location.replace(redirectTo);
+      }
+    } catch {
+      if (typeof window !== 'undefined') window.location.replace(redirectTo);
+    }
+
+    return { success: true, data };
+  } catch (error) {
+    return { success: false, error: error.message };
   }
 };
