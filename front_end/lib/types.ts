@@ -12,10 +12,10 @@ export type ConnectedAccount = {
 };
 
 /** Mock data structure for a reward item */
-export type Reward = {
+export type Reward =  {
   id: string;
   title: string;
-  points: number;
+  cost: number;
   imageUrl: string;
   vendor: string;
 };
