@@ -1,11 +1,51 @@
-import React from 'react';
-import { MOCK_PAYMENTS } from '@/lib/mock-data';
+"use client";
+import React, { useEffect, useState } from 'react';
 import { ShoppingCart } from 'lucide-react';
+import { Payment } from '@/lib/types';
 
 export const PaymentList: React.FC = () => {
+  const [payments, setPayments] = useState<Payment[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPayments = async () => {
+      try {
+        const res = await fetch('/api/v0/payment/history', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include'
+        });
+        console.log(res.status)
+        if (res.ok) {
+          console.log(res.status)
+          const data = await res.json();
+          if (Array.isArray(data.payments)) {
+            setPayments(data.payments);
+          } else {
+            console.error('Fetched data.payments is not an array:', data);
+          }
+        } else {
+          console.error('Failed to fetch payments');
+        }
+      } catch (error) {
+        console.error('An error occurred while fetching payments:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPayments();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <ul className="divide-y divide-border">
-      {MOCK_PAYMENTS.map(payment => (
+      {payments.map(payment => (
         <li key={payment.id} className="p-4 flex items-center justify-between">
           <div className="flex items-center">
             <div className="p-2 bg-muted rounded-full mr-3">
@@ -13,7 +53,7 @@ export const PaymentList: React.FC = () => {
             </div>
             <div>
               <div className="font-semibold">{payment.merchant}</div>
-              <div className="text-sm text-muted-foreground">{payment.date}</div>
+              <div className="text-sm text-muted-foreground">{new Date(payment.date).toLocaleDateString()}</div>
             </div>
           </div>
           <div className="text-right">
