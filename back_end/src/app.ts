@@ -2,37 +2,39 @@ import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import passport from 'passport';
-import configurePassport from './auth/passport';
-import apiRouter from './api'; // This imports from src/api/index.ts
+import cookieParser from 'cookie-parser';
+import apiRouter from './api';
 
 const app: Application = express();
 
 // =======================
 // 1. Global Middleware
 // =======================
-app.use(helmet());      // Security headers
-app.use(cors());        // Enable CORS for all routes (configure as needed for production)
-app.use(morgan('dev')); // Request logging
-app.use(express.json()); // Parse JSON request bodies
-app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
+app.use(helmet());
 
-// Initialize Passport (for OAuth) - stateless (we use JWTs for auth)
-configurePassport();
-app.use(passport.initialize());
+const corsOptions = {
+    origin: 'http://localhost:3000',
+    optionsSuccessStatus: 200 
+};
+
+app.use(cors(corsOptions));
+
+
+
+app.use(morgan('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // =======================
 // 2. API Route Mounts
 // =======================
-// Mounts all versioned routes under /api
-// e.g., /api/v0/user/create
 app.use('/api', apiRouter);
 
-// Basic health check route (optional but useful)
+// Basic health check route
 app.get('/health', (req: Request, res: Response) => {
     res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
 });
-
 
 // 404 Handler
 app.use((req: Request, res: Response) => {
@@ -42,18 +44,14 @@ app.use((req: Request, res: Response) => {
     });
 });
 
-
-
+// Global Error Handler
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-    console.error('Error:', err.stack); // Log the error for debugging
-
+    console.error('Error:', err.stack);
     const statusCode = err.statusCode || 500;
     const message = err.message || 'Internal Server Error';
-
     res.status(statusCode).json({
         success: false,
         message: message,
-        // Only include stack trace in development mode for security
         stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
     });
 });
