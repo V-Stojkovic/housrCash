@@ -52,19 +52,41 @@ async function initDB() {
         // 2. DEPENDENT TABLES (Has Foreign Keys)
         // =========================================
 
-        // Reward Table (merged your two definitions)
+        // Reward Table
         await connection.query(`
             CREATE TABLE IF NOT EXISTS reward (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                type VARCHAR(100),
-                cost DECIMAL(10, 2) NOT NULL,
+                title VARCHAR(255) NOT NULL,
+                description TEXT,
+                points_required INT NOT NULL,
+                image_url VARCHAR(500),
+                is_active BOOLEAN DEFAULT TRUE,
                 redemptions INT DEFAULT 0,
-                active BOOLEAN DEFAULT TRUE,
                 categoryId INT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 FOREIGN KEY (categoryId) REFERENCES category(id) ON DELETE SET NULL
             );
         `);
         console.log(' Table "reward" checked/created.');
+        
+        // Settings Table for cashback rate and other global settings
+        await connection.query(`
+            CREATE TABLE IF NOT EXISTS settings (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                setting_key VARCHAR(100) NOT NULL UNIQUE,
+                setting_value VARCHAR(255) NOT NULL,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            );
+        `);
+        console.log('Table "settings" checked/created.');
+        
+        // Insert default cashback rate if not exists
+        await connection.query(`
+            INSERT IGNORE INTO settings (setting_key, setting_value)
+            VALUES ('cashback_rate', '1.0');
+        `);
+        console.log('Default settings initialized.');
 
         // Payment Table
         // NOTE: removed reference to missing 'payment_history' table for now.
