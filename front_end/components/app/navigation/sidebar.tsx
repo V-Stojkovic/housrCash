@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 
 // Define items inside the client component or in a separate .ts file imported here
 const navItems = [
-  { href: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/groups', label: 'Groups', icon: Users },
   { href: '/rewards', label: 'Redeem Rewards', icon: Gift },
   { href: '/history', label: 'History', icon: History },

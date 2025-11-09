@@ -8,7 +8,7 @@ import { handleSignOut } from '@/lib/auth';
 import { toast } from 'sonner';
 
 const navItems = [
-  { href: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/groups', label: 'Groups', icon: Users },
   { href: '/rewards', label: 'Rewards', icon: Gift },
   { href: '/history', label: 'History', icon: History },

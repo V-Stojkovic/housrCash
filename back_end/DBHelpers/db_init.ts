@@ -124,7 +124,7 @@ async function initDB() {
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 userId INT NOT NULL,
                 date DATETIME DEFAULT CURRENT_TIMESTAMP,
-                value DECIMAL(10, 2) NOT NULL,
+                value INTEGER NOT NULL,
                 paymentAmount DECIMAL(10, 2) NOT NULL,
                 reference VARCHAR(255),
                 FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE
