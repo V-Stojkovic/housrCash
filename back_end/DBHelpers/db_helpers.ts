@@ -49,12 +49,12 @@ export interface paymentHistory extends RowDataPacket {
 
 
 export const createUser = async (userData: CreateUserDTO): Promise<number> => {
-    const { email, firstName, password_hash = null, salt = null } = userData;
+    const { email, firstName, password_hash = null} = userData;
 
     // 1. Define the SQL with '?' placeholders.
     const sql = `
-        INSERT INTO user (email, firstName, password_hash, salt)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO user (email, firstName, password_hash)
+        VALUES (?, ?, ?)
     `;
 
     // 2. Execute Query
@@ -63,8 +63,7 @@ export const createUser = async (userData: CreateUserDTO): Promise<number> => {
     const [result] = await pool.query<ResultSetHeader>(sql, [
         email,
         firstName,
-        password_hash,
-        salt
+        password_hash    
     ]);
 
     // 3. Return the new user's ID

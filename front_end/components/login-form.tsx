@@ -39,7 +39,7 @@ export function LoginForm({
         // Assuming handleSignIn in lib/auth.js is updated to accept these args
         // based on your backend controller it needs: { email, password_string }
     console.log(`Sigining In...`)
-    const result = await handleSignIn({ email, password_string: password }, router, '/');
+    const result = await handleSignIn({ email, password_string: password }, router, '/dashboard');
 
     if (result && !result.success) {
       setError(result?.error || "Login failed");
