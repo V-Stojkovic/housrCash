@@ -10,8 +10,8 @@ export const oauthCallback = async (req: Request, res: Response, next: NextFunct
         }
 
         // Create a token for the user
-        const token = jwt.sign(
-            { userId: user.id, username: user.username },
+        const token = jwt.sign( 
+            { userId: user.id },
             process.env.JWT_SECRET || 'fallback_secret_do_not_use_in_prod',
             { expiresIn: '1h' }
         );
@@ -19,8 +19,8 @@ export const oauthCallback = async (req: Request, res: Response, next: NextFunct
         // If front-end URL is provided, redirect with token as query param. Otherwise return JSON.
         const frontend = process.env.FRONTEND_URL;
         if (frontend) {
-            // Redirect to frontend with token in query string (client should grab it)
-            const redirectUrl = `${frontend.replace(/\/$/, '')}/auth/success?token=${token}`;
+            // Redirect to frontend with token and userId in query string (client should grab it)
+            const redirectUrl = `${frontend.replace(/\/$/, '')}/auth/success?token=${token}&userId=${user.id}`;
             return res.redirect(302, redirectUrl);
         }
 

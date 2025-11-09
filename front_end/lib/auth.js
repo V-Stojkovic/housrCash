@@ -3,6 +3,7 @@ import { signOut } from 'next-auth/react';
 const USER_ID_KEY = 'housr_user_id';
 
 export const loginEndpoint = '/api/v0/user/login';
+export const signupEndpoint = '/api/v0/user/create';
 
 // Backend base url - use NEXT_PUBLIC_BACKEND_URL when available, fallback to localhost:4000
 const BACKEND_BASE = "http://localhost:4000"
@@ -43,7 +44,7 @@ export const processOAuthCallback = (router, redirectTo = '/') => {
       } else if (typeof window !== 'undefined') {
         window.location.replace(redirectTo);
       }
-    } catch (err) {
+    } catch {
       // fallback to full redirect
       if (typeof window !== 'undefined') window.location.replace(redirectTo);
     }
@@ -60,10 +61,10 @@ export const getCurrentUserId = () => {
 };
 
 // handleSignIn(credentials, router?, redirectTo?)
-// credentials should match backend expected shape: { username, password_string }
+// credentials should match backend expected shape: { email, password_string }
 export const handleSignIn = async (credentials, router, redirectTo = '/') => {
   try {
-    const response = await fetch(loginEndpoint, {
+    const response = await fetch(`${loginEndpoint}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -93,7 +94,51 @@ export const handleSignIn = async (credentials, router, redirectTo = '/') => {
       } else if (typeof window !== 'undefined') {
         window.location.replace(redirectTo);
       }
-    } catch (err) {
+    } catch {
+      if (typeof window !== 'undefined') window.location.replace(redirectTo);
+    }
+
+    return { success: true, data };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
+// handleSignUp(userData, router?, redirectTo?)
+// credentials should match backend expected shape: { email, password_string }
+export const handleSignUp = async (userData, router, redirectTo = '/') => {
+  try {
+    const response = await fetch(`${signupEndpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Signup failed' }));
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    // Save token and userId to localStorage if present
+    if (data.token) {
+      localStorage.setItem('housr_auth_token', data.token);
+    }
+    if (data.userId) {
+      localStorage.setItem(USER_ID_KEY, data.userId);
+    }
+
+    // If router provided, navigate client-side, otherwise fallback to full redirect
+    try {
+      if (router && typeof router.replace === 'function') {
+        router.replace(redirectTo);
+      } else if (typeof window !== 'undefined') {
+        window.location.replace(redirectTo);
+      }
+    } catch {
       if (typeof window !== 'undefined') window.location.replace(redirectTo);
     }
 

@@ -26,14 +26,11 @@ async function initDB() {
         await connection.query(`
             CREATE TABLE IF NOT EXISTS user (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                username VARCHAR(50) NOT NULL UNIQUE,
                 email VARCHAR(100) NOT NULL UNIQUE,
                 googleId INT UNIQUE,
                 firstName VARCHAR(100) NOT NULL,
-                surname VARCHAR(100) NOT NULL,
                 balance DECIMAL(10, 2) DEFAULT 0.00,
                 password_hash VARCHAR(255) DEFAULT NULL,
-                salt VARCHAR(255) DEFAULT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         `);

@@ -39,9 +39,9 @@ export default function AdminDashboard() {
     
     const loadData = async () => {
       try {
-        console.log('Fetching rewards from: /api/v0/reward');
+        console.log('Fetching rewards from: /api/v0/reward/admin');
         // Fetch rewards
-        const rewardsRes = await fetch('/api/v0/reward');
+        const rewardsRes = await fetch('/api/v0/reward/admin');
         console.log('Rewards response status:', rewardsRes.status);
         
         const rewardsData = await rewardsRes.json();
@@ -57,7 +57,7 @@ export default function AdminDashboard() {
         
         if (rewardsData.success) {
           // Map backend fields to frontend format
-          const mappedRewards = rewardsData.data.map((r: Reward) => ({
+          const mappedRewards = rewardsData.rewards.map((r: Reward) => ({
             id: r.id,
             title: r.title,
             description: r.description,

@@ -9,5 +9,5 @@ userRouter.post('/login', userController.authUser); // /api/v0/user/login
 
 // Other examples:
 // router.get('/:id', userController.getUser);
-
+userRouter.get('/balance/:id', userController.getUserBalance); // /api/v0/user/balance/:id
 export default userRouter;

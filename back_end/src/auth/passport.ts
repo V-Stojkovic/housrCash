@@ -36,27 +36,20 @@ export default function configurePassport() {
                 const firstName = profile.name?.givenName || profile.displayName || '';
                 const surname = profile.name?.familyName || '';
 
-                // create a username from email local part or displayName
-                let username = '';
-                if (email) username = email.split('@')[0];
-                if (!username) username = (profile.displayName || `guser_${googleId}`).replace(/\s+/g, '_').toLowerCase();
-
+                
                 // For OAuth users we still need a password_hash and salt (DB schema requires NOT NULL)
                 const randomPassword = Math.random().toString(36).slice(-12);
                 const salt = await bcrypt.genSalt(10);
                 const password_hash = await bcrypt.hash(randomPassword, salt);
 
                 const newUserId = await dbCreateUser({
-                    username,
-                    email: email || `${username}@no-email.local`,
+                    email: email || `${googleId}@no-email.local`,
                     firstName,
-                    surname,
                     password_hash,
-                    salt,
                     googleId: Number(googleId)
                 });
 
-                const created = { id: newUserId, username, email };
+                const created = { id: newUserId, email };
                 return done(null, created);
             } catch (err) {
                 return done(err as any);

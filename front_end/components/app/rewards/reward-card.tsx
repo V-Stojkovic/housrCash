@@ -22,7 +22,7 @@ export const RewardCard: React.FC<RewardCardProps> = ({ reward, balance }) => {
         <CardTitle>{reward.title}</CardTitle>
       </CardHeader>
       <CardContent className="flex-1">
-        <p className="text-lg font-bold text-foreground">{balance ? (Math.max(0, reward.cost - balance)).toLocaleString(): reward.cost.toLocaleString()} pts {balance ? 'to go': ''}</p>
+        <p className="text-lg font-bold text-foreground">{balance ? (Math.max(0, reward.cost - balance)).toLocaleString(): reward.cost} pts {balance ? 'to go': ''}</p>
       </CardContent>
       <CardFooter>
         <Button className="w-full">Redeem Now</Button>
