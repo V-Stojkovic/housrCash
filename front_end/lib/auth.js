@@ -2,7 +2,7 @@ import { signIn, signOut } from 'next-auth/react';
 
 const USER_ID_KEY = 'housr_user_id';
 
-export const loginEndpoint = '/api/v0/login';
+export const loginEndpoint = '/api/v0/user/login';
 export const handleGoogleSignIn = () => signIn('google');
 
 export const getCurrentUserId = () => {
