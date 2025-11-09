@@ -3,14 +3,31 @@
 import React, { useEffect, useState } from 'react';
 import { RewardCard } from '@/components/app/rewards/reward-card';
 import { Reward } from '@/lib/types';
+import { getCurrentUserId } from '@/lib/auth';
 
 const RewardsPage: React.FC = () => {
   const [rewards, setRewards] = useState<Reward[]>([]);
+  const [balance, setBalance] = useState<number | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [nextCursor, setNextCursor] = useState<number | null>(null);
 
   const LIMIT = 12;
+
+  const fetchBalance = async () => {
+    const userId = getCurrentUserId();
+    if (!userId) return;
+
+    try {
+      const res = await fetch(`/api/v0/user/balance/${userId}`);
+      if (res.ok) {
+        const data = await res.json();
+        setBalance(data.data?.balance || 0);
+      }
+    } catch (err) {
+      console.error('Failed to fetch balance:', err);
+    }
+  };
 
   const fetchRewards = async (cursor?: number | null) => {
     setLoading(true);
@@ -38,8 +55,14 @@ const RewardsPage: React.FC = () => {
     }
   };
 
+  const handleRedeemSuccess = () => {
+    // Refresh balance after successful redemption
+    fetchBalance();
+  };
+
   useEffect(() => {
     fetchRewards(null);
+    fetchBalance();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -48,13 +71,23 @@ const RewardsPage: React.FC = () => {
       <h2 className="text-3xl font-bold text-gray-800">Redeem Rewards</h2>
       <p className="text-lg text-gray-600">Use your points to claim exciting rewards!</p>
 
+      {balance !== undefined && (
+        <div className="text-lg font-semibold text-primary">
+          Your Balance: {balance.toLocaleString()} points
+        </div>
+      )}
+
       {error && (
         <div className="text-destructive">Error loading rewards: {error}</div>
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {rewards.map(reward => (
-          <RewardCard key={reward.id} reward={reward} />
+          <RewardCard 
+            key={reward.id} 
+            reward={reward} 
+            onRedeemSuccess={handleRedeemSuccess}
+          />
         ))}
       </div>
 

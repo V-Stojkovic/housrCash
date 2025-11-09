@@ -4,6 +4,7 @@ import Providers from "./Providers";
 import "./globals.css";
 import { Sidebar } from '@/components/app/navigation/sidebar';
 import { BottomNav } from '@/components/app/navigation/bottom-nav';
+import { Toaster } from 'sonner';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,6 +41,7 @@ export default function RootLayout({
             {/* BottomNav for mobile is now part of the global layout */}
             <BottomNav />
           </div>
+          <Toaster richColors position="top-right" />
         </Providers>
       </body>
     </html>
