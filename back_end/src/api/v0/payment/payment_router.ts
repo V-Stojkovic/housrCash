@@ -23,7 +23,7 @@ paymentRouter.get("/history", async (req, res) => {
 });
 
 paymentRouter.post("/", async (req, res) => {
-    const { user_id, reference, amount } = req.body;
+    const { user_id, reference, amount,  value} = req.body;
     console.log("Received payment data:", { user_id, reference, amount });
     if (!user_id || !reference || !amount) {
         return res.status(400).json({ success: false, message: "Missing required payment fields" });
@@ -32,12 +32,12 @@ paymentRouter.post("/", async (req, res) => {
     try {
         // Try to detect and use a DB transaction if the DB helper exports a knex/db instance.
         // This keeps both operations atomic: if addCredit fails, the payment insert is rolled back.
-        const table = await cashbackRateTest();
-        console.log("Table:", table);
+        const rate: number = await cashbackRateTest();
+        // console.log("Table:", table);
         const knexInstance = dbHelpers.knex || dbHelpers.db || dbHelpers.default?.knex || dbHelpers.default?.db || null;
-        const rate = await Number(getCashBackRate());
+        // const rate = await Number(getCashBackRate());
         console.log("Cashback rate:", rate);
-        const transaction_gain = amount * rate;
+        const transaction_gain = amount * rate!;
         if (knexInstance && typeof knexInstance.transaction === 'function') {
             const data = await knexInstance.transaction(async (trx: any) => {
                 // assume addPayment/addCredit accept an optional trx parameter

@@ -10,7 +10,7 @@ export const PaymentList: React.FC = () => {
   useEffect(() => {
     const fetchPayments = async () => {
       try {
-        const res = await fetch('/api/v0/payment/history', {
+        const res = await fetch('/api/v0/payments/history/', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -21,11 +21,7 @@ export const PaymentList: React.FC = () => {
         if (res.ok) {
           console.log(res.status)
           const data = await res.json();
-          if (Array.isArray(data.payments)) {
-            setPayments(data.payments);
-          } else {
-            console.error('Fetched data.payments is not an array:', data);
-          }
+          setPayments(data);
         } else {
           console.error('Failed to fetch payments');
         }

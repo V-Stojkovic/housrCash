@@ -18,7 +18,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { handleSignIn, handleGoogleSignIn } from "@/lib/auth"
+import { handleSignIn } from "@/lib/auth"
 
 export function LoginForm({
   className,

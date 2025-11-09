@@ -12,12 +12,12 @@ const app: Application = express();
 // =======================
 app.use(helmet());
 
-const corsOptions = {
-    origin: 'http://localhost:3000',
-    optionsSuccessStatus: 200 
-};
-
-app.use(cors(corsOptions));
+app.use(cors({
+  origin: 'http://localhost:3000', // REPLACER with your actual frontend URL if different
+  credentials: true, // This allows the session cookie to be sent back and forth
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 
 

@@ -1,4 +1,6 @@
 'use client';
+import apiFetch from '@/lib/api.js';
+
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Award } from 'lucide-react';
@@ -72,7 +74,7 @@ export const RedemptionList: React.FC = () => {
       const queryString = params.toString();
       const url = `/api/v0/redeem/history/${userId}${queryString ? `?${queryString}` : ''}`;
 
-      const response = await fetch(url);
+      const response = await apiFetch(url);
       
       if (!response.ok) {
         throw new Error('Failed to fetch redemption history');

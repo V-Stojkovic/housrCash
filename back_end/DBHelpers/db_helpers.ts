@@ -167,13 +167,13 @@ export const getCashBackRate = async(): Promise<number> => {
     return 1.0; // Default to 1.0 if not found
 }
 
-export const cashbackRateTest = async():Promise<number | null> =>{
+export const cashbackRateTest = async():Promise<number> =>{
     const sql = 'SELECT setting_value FROM settings WHERE setting_key = ?';
     const [rows] = await pool.query<RowDataPacket[]>(sql, ['cashback_rate']);
     if (rows.length > 0 && rows[0].setting_value) {
         return parseFloat(rows[0].setting_value);
     }
-    return null;
+    return 1;
 }
 
 export const setCashBackRate = async(newRate :number):Promise<void> => {
