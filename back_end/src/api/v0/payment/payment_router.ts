@@ -32,10 +32,10 @@ paymentRouter.post("/", async (req, res) => {
     try {
         // Try to detect and use a DB transaction if the DB helper exports a knex/db instance.
         // This keeps both operations atomic: if addCredit fails, the payment insert is rolled back.
-        const table = cashbackRateTest();
+        const table = await cashbackRateTest();
         console.log("Table:", table);
         const knexInstance = dbHelpers.knex || dbHelpers.db || dbHelpers.default?.knex || dbHelpers.default?.db || null;
-        const rate = Number(getCashBackRate());
+        const rate = await Number(getCashBackRate());
         console.log("Cashback rate:", rate);
         const transaction_gain = amount * rate;
         if (knexInstance && typeof knexInstance.transaction === 'function') {
@@ -54,8 +54,6 @@ paymentRouter.post("/", async (req, res) => {
             const payment = await addPayment({ userId: user_id, reference, paymentAmount: amount, value: rate });
 
             try {
-                const rate = Number(getCashBackRate());
-                const transaction_gain = amount * rate;
                 await addCredit({ userId: user_id, amount: transaction_gain });
                 return res.status(200).json({ success: true, data: payment, user_id, reference, amount });
             } catch (creditError) {
