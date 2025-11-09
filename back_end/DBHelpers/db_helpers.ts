@@ -159,8 +159,11 @@ export const addCredit = async (credit: addCredit, transaction?: any): Promise<n
 export const getCashBackRate = async(): Promise<number> => {
     const sql = 'SELECT setting_value FROM settings WHERE setting_key = ?';
     const [rows] = await pool.query<RowDataPacket[]>(sql, ['cashback_rate']);
+
     if (rows[0] && rows[0].setting_value) {
-        return parseFloat(rows[0].setting_value);
+        const rate = parseFloat(rows[0].setting_value);
+        // Ensure the parsed rate is a valid number; if NaN, return default
+        return isNaN(rate) ? 1.0 : rate;
     }
     return 1.0; // Default to 1.0 if not found
 }
