@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import pool from '../../../../DBHelpers';
 import { RowDataPacket, ResultSetHeader } from 'mysql2';
+import { sendRewardRedemptionEmail } from '../../../utils/email';
 
 const redeemRouter = Router();
 
@@ -76,7 +77,7 @@ redeemRouter.get("/:user_id/:reward_id", async (req, res) => {
     try {
         // 1. Get user's current balance
         const [userRows] = await pool.query<RowDataPacket[]>(
-            'SELECT id, balance FROM user WHERE id = ?',
+            'SELECT id, email, firstName, balance FROM user WHERE id = ?',
             [user_id]
         );
 
@@ -89,6 +90,8 @@ redeemRouter.get("/:user_id/:reward_id", async (req, res) => {
 
         const user = userRows[0];
         const userBalance = parseFloat(user.balance);
+        const userEmail = user.email;
+        const userName = user.firstName;
 
         // 2. Get reward details and check if it's active
         const [rewardRows] = await pool.query<RowDataPacket[]>(
@@ -157,6 +160,19 @@ redeemRouter.get("/:user_id/:reward_id", async (req, res) => {
             // Return success with updated balance
             const newBalance = userBalance - rewardCost;
 
+            // Send confirmation email (don't wait for it to complete)
+            sendRewardRedemptionEmail({
+                userEmail,
+                userName,
+                rewardTitle: reward.title,
+                rewardCost,
+                previousBalance: userBalance,
+                newBalance,
+            }).catch(err => {
+                console.error('Failed to send redemption email:', err);
+                // Don't fail the request if email fails
+            });
+
             res.status(200).json({ 
                 success: true, 
                 message: "Reward redeemed successfully!",
@@ -182,6 +198,65 @@ redeemRouter.get("/:user_id/:reward_id", async (req, res) => {
         res.status(500).json({ 
             success: false, 
             message: "An error occurred while redeeming the reward" 
+        });
+    }
+});
+
+// Test endpoint for email functionality
+redeemRouter.post("/test-email", async (req, res) => {
+    try {
+        const {
+            userEmail = "test@example.com",
+            userName = "Test User",
+            rewardTitle = "Test Reward",
+            rewardCost = 100,
+            previousBalance = 500,
+            newBalance = 400
+        } = req.body;
+
+        console.log('Testing email with data:', {
+            userEmail,
+            userName,
+            rewardTitle,
+            rewardCost,
+            previousBalance,
+            newBalance
+        });
+
+        const emailSent = await sendRewardRedemptionEmail({
+            userEmail,
+            userName,
+            rewardTitle,
+            rewardCost,
+            previousBalance,
+            newBalance,
+        });
+
+        if (emailSent) {
+            res.status(200).json({
+                success: true,
+                message: "Test email sent successfully!",
+                data: {
+                    emailSent: true,
+                    sentTo: userEmail
+                }
+            });
+        } else {
+            res.status(200).json({
+                success: false,
+                message: "Email not configured or failed to send. Check console logs.",
+                data: {
+                    emailSent: false,
+                    note: "Check EMAIL_USER and EMAIL_PASSWORD in .env"
+                }
+            });
+        }
+    } catch (error) {
+        console.error('Error testing email:', error);
+        res.status(500).json({
+            success: false,
+            message: "Error testing email",
+            error: error instanceof Error ? error.message : 'Unknown error'
         });
     }
 });
