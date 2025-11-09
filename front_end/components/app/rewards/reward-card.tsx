@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Reward } from '@/lib/types';
 import { toast } from 'sonner';
 import { getCurrentUserId } from '@/lib/auth';
+import apiFetch from '@/lib/api.js';
 
 interface RewardCardProps {
   reward: Reward;
@@ -29,7 +30,7 @@ export const RewardCard: React.FC<RewardCardProps> = ({ reward, balance, onRedee
     setIsRedeeming(true);
 
     try {
-      const response = await fetch(`/api/v0/redeem/${userId}/${reward.id}`, {
+      const response = await apiFetch(`/api/v0/redeem/${userId}/${reward.id}`, {
         method: 'GET',
       });
 

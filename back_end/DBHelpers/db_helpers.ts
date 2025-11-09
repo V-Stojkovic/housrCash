@@ -44,12 +44,13 @@ export interface UserAuthData extends RowDataPacket {
 export interface paymentHistory extends RowDataPacket {
     id: number,
     paymentAmount : number,
-    reference : string
+    reference : string,
+    pointsEarned: number
 }
 
 
 export const createUser = async (userData: CreateUserDTO): Promise<number> => {
-    const { email, firstName, password_hash = null, salt = null } = userData;
+    const { email, firstName, password_hash = null} = userData;
 
     // 1. Define the SQL with '?' placeholders.
     const sql = `
@@ -118,6 +119,7 @@ export const addPayment = async (payment: paymentDTO, transaction?: any): Promis
 }
 
 export const getPayments = async(userId?: number): Promise<paymentHistory[]> => {
+    console.log("userId:", userId);
     let sql = 'SELECT id, userId, paymentAmount, reference, date FROM payment';
     const params: any[] = [];
 
@@ -167,13 +169,13 @@ export const getCashBackRate = async(): Promise<number> => {
     return 1.0; // Default to 1.0 if not found
 }
 
-export const cashbackRateTest = async():Promise<number | null> =>{
+export const cashbackRateTest = async():Promise<number> =>{
     const sql = 'SELECT setting_value FROM settings WHERE setting_key = ?';
     const [rows] = await pool.query<RowDataPacket[]>(sql, ['cashback_rate']);
     if (rows.length > 0 && rows[0].setting_value) {
         return parseFloat(rows[0].setting_value);
     }
-    return null;
+    return 1;
 }
 
 export const setCashBackRate = async(newRate :number):Promise<void> => {

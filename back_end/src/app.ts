@@ -12,12 +12,12 @@ const app: Application = express();
 // =======================
 app.use(helmet());
 
-const corsOptions = {
-    origin: 'http://localhost:3000',
-    optionsSuccessStatus: 200 
-};
-
-app.use(cors(corsOptions));
+app.use(cors({
+  origin: 'http://localhost:3000', // REPLACER with your actual frontend URL if different
+  credentials: true, // This allows the session cookie to be sent back and forth
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 
 
@@ -35,7 +35,7 @@ app.use('/api', apiRouter);
 app.get('/health', (req: Request, res: Response) => {
     res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
 });
-
+console.log("DEBUG: ENDPOINTS")
 // 404 Handler
 app.use((req: Request, res: Response) => {
     res.status(404).json({

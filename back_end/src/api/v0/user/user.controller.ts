@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express'
 import { getId, getPasswordHash, createUser as dbCreateUser } from '../../../../DBHelpers/db_helpers';
 import pool from '../../../../DBHelpers';
 import { RowDataPacket } from 'mysql2';
@@ -118,40 +118,39 @@ export const authUser = async (
     }
 };
 
-export const getUserBalance = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
+export const getUserBalance = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params;
+        // Get the user ID from the token (set by your auth middleware)
 
-        // Validate ID
-        if (!id || isNaN(Number(id))) {
-            return res.status(400).json({ success: false, message: 'Invalid user ID' });
+        const userId = (req as any).user.userId;
+
+
+        // Failsafe: if middleware didn't run or failed to set user
+        if (!userId) {
+            return res.status(401).json({ success: false, message: 'Unauthorized' });
         }
 
-        // Query database for user balance
+        // Query database using the trusted userId from the token
         const sql = 'SELECT id, email, balance FROM user WHERE id = ? LIMIT 1';
-        const [rows] = await pool.query<RowDataPacket[]>(sql, [id]);
+        const [rows] = await pool.query<RowDataPacket[]>(sql, [userId]);
 
         if (rows.length === 0) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
 
-        const user: any = rows[0];
+        const user = rows[0];
 
         res.status(200).json({
             success: true,
             data: {
                 id: user.id,
                 email: user.email,
-                balance: parseFloat(user.balance) // Convert DECIMAL to number
+                balance: parseFloat(user.balance)
             }
         });
-
     } catch (error) {
-        next(error);
+        console.error("Error getting balance:", error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };
 

@@ -1,29 +1,16 @@
 import { Router } from 'express';
 import { addCredit, addPayment, cashbackRateTest, getCashBackRate, getId, getPayments } from '../../../../DBHelpers/db_helpers';
+import { authenticateToken } from '../../../middleware/authenticate';
 const dbHelpers: any = require('../../../../DBHelpers/db_helpers'); // dynamic require to avoid changing top imports
 
 
 
 const paymentRouter = Router();
 
-// GET /api/v0/payment/get - Get all payments or filtered by userId
-paymentRouter.get("/history", async (req, res) => {
-    try {
-        const userId = req.query.userId ? Number(req.query.userId) : undefined;
-        const payments = await getPayments(userId);
-        res.json({ success: true, payments });
-    } catch (error) {
-        console.error("Error fetching payments:", error);
-        res.status(500).json({
-            success: false,
-            message: "Failed to fetch payments",
-            error: error instanceof Error ? error.message : error
-        });
-    }
-});
+
 
 paymentRouter.post("/", async (req, res) => {
-    const { user_id, reference, amount } = req.body;
+    const { user_id, reference, amount,  value} = req.body;
     console.log("Received payment data:", { user_id, reference, amount });
     if (!user_id || !reference || !amount) {
         return res.status(400).json({ success: false, message: "Missing required payment fields" });
@@ -32,12 +19,12 @@ paymentRouter.post("/", async (req, res) => {
     try {
         // Try to detect and use a DB transaction if the DB helper exports a knex/db instance.
         // This keeps both operations atomic: if addCredit fails, the payment insert is rolled back.
-        const table = await cashbackRateTest();
-        console.log("Table:", table);
+        const rate: number = await cashbackRateTest();
+        // console.log("Table:", table);
         const knexInstance = dbHelpers.knex || dbHelpers.db || dbHelpers.default?.knex || dbHelpers.default?.db || null;
-        const rate = await Number(getCashBackRate());
+        // const rate = await Number(getCashBackRate());
         console.log("Cashback rate:", rate);
-        const transaction_gain = amount * rate;
+        const transaction_gain = amount * rate!;
         if (knexInstance && typeof knexInstance.transaction === 'function') {
             const data = await knexInstance.transaction(async (trx: any) => {
                 // assume addPayment/addCredit accept an optional trx parameter
@@ -94,6 +81,20 @@ paymentRouter.post("/", async (req, res) => {
         });
     }
 });
-
+// GET /api/v0/payment/get - Get all payments or filtered by userId
+paymentRouter.get("/paid",authenticateToken, async (req, res) => {
+    try {
+        const userId = (req as any).user.userId;
+        const payments = await getPayments(userId);
+        res.json({ success: true, payments });
+    } catch (error) {
+        console.error("Error fetching payments:", error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to fetch payments",
+            error: error instanceof Error ? error.message : error
+        });
+    }
+});
 
 export default paymentRouter;

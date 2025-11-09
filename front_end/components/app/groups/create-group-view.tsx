@@ -7,6 +7,7 @@ import { Field, FieldLabel } from '@/components/ui/field';
 import { getCurrentUserId } from '@/lib/auth';
 import { toast } from 'sonner';
 import { Copy, Check } from 'lucide-react';
+import apiFetch from '@/lib/api.js';
 
 
 
@@ -35,7 +36,7 @@ export const CreateGroupView: React.FC<CreateGroupViewProps> = ({ onGroupCreated
     setLoading(true);
 
     try {
-      const response = await fetch(`/api/v0/group/create`, {
+      const response = await apiFetch(`/api/v0/group/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

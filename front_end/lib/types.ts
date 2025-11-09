@@ -24,8 +24,8 @@ export type Reward =  {
 export type Payment = {
   id: string;
   date: string;
-  merchant: string;
-  amount: number;
+  reference: string;
+  paymentAmount: number;
   pointsEarned: number;
 };
 

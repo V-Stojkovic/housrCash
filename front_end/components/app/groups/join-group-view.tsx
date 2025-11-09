@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Field, FieldLabel } from '@/components/ui/field';
 import { getCurrentUserId } from '@/lib/auth';
 import { toast } from 'sonner';
+import apiFetch from '@/lib/api.js';
 
 
 
@@ -32,7 +33,7 @@ export const JoinGroupView: React.FC<JoinGroupViewProps> = ({ onGroupJoined }) =
     setLoading(true);
 
     try {
-      const response = await fetch(`/api/v0/group/join`, {
+      const response = await apiFetch(`/api/v0/group/join`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
