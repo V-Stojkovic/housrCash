@@ -19,7 +19,7 @@ const RewardsPage: React.FC = () => {
     if (!userId) return;
 
     try {
-      const res = await fetch(`/api/v0/user/balance/${userId}`);
+      const res = await fetch(`/api/v0/user/balance`);
       if (res.ok) {
         const data = await res.json();
         setBalance(data.data?.balance || 0);

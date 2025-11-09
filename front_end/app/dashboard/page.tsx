@@ -23,7 +23,13 @@ export default function DashboardPage() {
           throw new Error('User not authenticated. Please log in.');
         }
 
-        const response = await fetch(`/api/v0/user/balance/${userId}`);
+        const response = await fetch(`/api/v0/user/balance`,{
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include'
+        });
         
         if (!response.ok) {
           throw new Error(`Failed to fetch balance: ${response.status}`);
