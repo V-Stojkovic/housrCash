@@ -19,10 +19,10 @@ router.get('/', async (req, res) => {
 
     if (cursor) {
       // return rows with id > cursor
-      sql = 'SELECT * FROM reward WHERE id > ? ORDER BY id ASC LIMIT ?';
+      sql = 'SELECT * FROM reward WHERE id > ? ORDER BY id DESC LIMIT ?';
       params = [cursor, limit];
     } else {
-      sql = 'SELECT * FROM reward ORDER BY id ASC LIMIT ?';
+      sql = 'SELECT * FROM reward ORDER BY id DESC LIMIT ?';
       params = [limit];
     }
 
