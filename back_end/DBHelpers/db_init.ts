@@ -32,8 +32,8 @@ async function initDB() {
                 firstName VARCHAR(100) NOT NULL,
                 surname VARCHAR(100) NOT NULL,
                 balance DECIMAL(10, 2) DEFAULT 0.00,
-                password_hash VARCHAR(255) NOT NULL,
-                salt VARCHAR(255) NOT NULL,
+                password_hash VARCHAR(255) DEFAULT NULL,
+                salt VARCHAR(255) DEFAULT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         `);

@@ -1,10 +1,12 @@
+"use client";
+
 import React from 'react';
 import { Card, CardTitle, CardHeader, CardContent, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Banknote, CreditCard, CheckCircle, Plus } from 'lucide-react';
 import { MOCK_CONNECTED_ACCOUNTS } from '@/lib/mock-data';
 
-export const ConnectPage: React.FC = () => {
+export default function ConnectPage() {
   return (
     <div className="space-y-6">
       <h2 className="text-3xl font-bold text-foreground">Connect Your Payments</h2>

@@ -2,6 +2,8 @@ import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import passport from 'passport';
+import configurePassport from './auth/passport';
 import apiRouter from './api'; // This imports from src/api/index.ts
 
 const app: Application = express();
@@ -14,6 +16,10 @@ app.use(cors());        // Enable CORS for all routes (configure as needed for p
 app.use(morgan('dev')); // Request logging
 app.use(express.json()); // Parse JSON request bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
+
+// Initialize Passport (for OAuth) - stateless (we use JWTs for auth)
+configurePassport();
+app.use(passport.initialize());
 
 // =======================
 // 2. API Route Mounts

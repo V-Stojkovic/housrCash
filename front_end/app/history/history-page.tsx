@@ -1,10 +1,12 @@
+"use client";
+
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from '@/components/ui/card';
-import { PaymentList } from '../history/payment-list';
-import { RedemptionList } from '../history/redemption-list';
+import { PaymentList } from '@/components/app/history/payment-list';
+import { RedemptionList } from '@/components/app/history/redemption-list';
 
-export const HistoryPage: React.FC = () => {
+export default function HistoryPage() {
   const [activeTab, setActiveTab] = useState<'payments' | 'redemptions'>('payments');
 
   return (

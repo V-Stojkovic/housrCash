@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import type { Reward } from '@/lib/types';
-import { RewardCard } from '../rewards/reward-card';
+import { RewardCard } from '@/components/app/rewards/reward-card';
+import { Reward } from '@/lib/types';
 
 export const RewardsPage: React.FC = () => {
   const [rewards, setRewards] = useState<Reward[]>([]);

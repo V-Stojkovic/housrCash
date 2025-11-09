@@ -1,3 +1,4 @@
+"use client"
 import React from 'react';
 import { Page } from '@/lib/types';
 import { LayoutDashboard, CreditCard, Gift, History } from 'lucide-react';

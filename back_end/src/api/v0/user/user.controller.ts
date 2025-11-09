@@ -41,9 +41,23 @@ export const createUser = async (req: Request<{}, {}, CreateUserDTO>, res: Respo
             salt
         });
 
-        res.status(201).json({
+        // Issue JWT so client can authenticate immediately (stateless)
+        const token = jwt.sign(
+            { userId: newUserId, username },
+            process.env.JWT_SECRET || 'fallback_secret_do_not_use_in_prod',
+            { expiresIn: '1h' }
+        );
+
+        // Set cookie for convenience (frontend can also read token from response)
+        res.status(201)
+        .cookie('auth-token', token, {
+            httpOnly: false, // front-end currently reads token from response; consider true for production
+            secure: process.env.NODE_ENV === 'production'
+        })
+        .json({
             success: true,
-            data: { id: newUserId, username, email }
+            data: { id: newUserId, username, email },
+            token,
         });
     } catch (error) {
         // mysql2 throws an error with code 'ER_DUP_ENTRY' for unique constraint violations
@@ -64,7 +78,7 @@ export const authUser = async (
 ) => {
     try {
         const { username, password_string } = req.body;
-
+        console.log(`[DEBUG]: REQUEST: {username}`)
 
         // 1. Find user in DB
         const user = await getPasswordHash(username);
@@ -89,12 +103,16 @@ export const authUser = async (
             { expiresIn: '1h' } // Token expiry
         );
 
-        // 5. Success response
+        // 5. Success response — include token in JSON so frontend can store it
         res.status(200)
-        .cookie("auth-token",token)
+        .cookie('auth-token', token, {
+            httpOnly: false,
+            secure: process.env.NODE_ENV === 'production'
+        })
         .json({
             message: 'Authentication successful',
-            userId: user.id
+            userId: user.id,
+            token
         });
 
     } catch (error) {
