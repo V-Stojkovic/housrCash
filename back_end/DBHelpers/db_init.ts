@@ -1,204 +1,153 @@
+// File: gen_rewards.ts
+//
+// This script gen_rewardss the database with dummy data for 'category' and 'reward'.
+// It's designed to be run after 'initDB.ts' has created the tables.
+//
+// How to run:
+// 1. Make sure your .env file is set up.
+// 2. Run: npx ts-node gen_rewards.ts
+//
 import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-async function initDB() {
-    const connection = await mysql.createConnection({
-        host: process.env.DB_HOST,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-    });
+// =========================================
+// DUMMY DATA DEFINITIONS
+// =========================================
 
+/**
+ * Categories to be inserted.
+ * We use INSERT IGNORE, so these will only be added if they don't exist.
+ * We will assume their IDs are 1, 2, 3, 4 for the rewards data.
+ */
+const categories = [
+    ['Gift Cards'],
+    ['Merchandise'],
+    ['Discounts'],
+    ['Experiences'],
+    ['Digital Goods']
+];
+
+/**
+ * Rewards to be inserted.
+ * Note: 'cost' is now an INT, representing points or cents (e.g., 1000 points).
+ */
+const rewards = [
+  {
+    title: '£10 Brewdog Gift Card',
+    description: 'A $10 gift card for use on Brewdog.com. Code will be emailed upon redemption.',
+    cost: 1000, // Assuming 1000 points
+    image_url: 'https://via.placeholder.com/300x200.png?text=Brewdog+Card',
+    is_active: true,
+    redemptions: 55,
+    categoryId: 1 // Matches 'Gift Cards'
+  },
+  {
+    title: '£25 Papa Johns',
+    description: '£25 Papa Johns voucher redeemable in-store or online.',
+    cost: 2500,
+    image_url: 'https://via.placeholder.com/300x200.png?text=Papa+Johns',
+    is_active: true,
+    redemptions: 120,
+    categoryId: 2 // Matches 'Merchandise'
+  },
+  {
+    title: 'MyProtein',
+    description: '£50 voucher for MyProtein products, valid online only.',
+    cost: 5000,
+    image_url: 'https://via.placeholder.com/300x200.png?text=MyProtein',
+    is_active: false, // Example of an inactive reward
+    redemptions: 15,
+    categoryId: 2 // Matches 'Merchandise'
+  },
+  {
+    title: '15% Off Next Purchase at New Balance',
+    description: 'A one-time-use coupon code for 15% off any single item at New Balance.',
+    cost: 500,
+    image_url: 'https://via.placeholder.com/300x200.png?text=15%25+Off+Coupon',
+    is_active: true,
+    redemptions: 250,
+    categoryId: 3 // Matches 'Discounts'
+  },
+  {
+    title: 'Spotify Premium - 1 Month Subscription',
+    description: 'Enjoy ad-free music with a one-month subscription to Spotify Premium.',
+    cost: 250,
+    image_url: 'https://via.placeholder.com/300x200.png?text=Spotify+Premium',
+    is_active: true,
+    redemptions: 89,
+    categoryId: 5 // Matches 'Digital Goods'
+  },
+  
+];
+
+
+// =========================================
+// SEEDING FUNCTION
+// =========================================
+
+async function seedData() {
+    let connection: mysql.Connection | null = null;
     try {
-        console.log(' Initializing database...');
+        connection = await mysql.createConnection({
+            host: process.env.DB_HOST,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_NAME // Connect directly to the DB
+        });
 
-        await connection.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME}\`;`);
-        console.log(`Database ${process.env.DB_NAME} checked/created.`);
+        console.log('✅ Connected to database. Seeding data...');
 
-        await connection.changeUser({ database: process.env.DB_NAME });
+        // --- 1. Seed Categories ---
+        // We use 'INSERT IGNORE' so it doesn't fail if categories already exist.
+        console.log('Seeding categories...');
+        const categorySql = 'INSERT IGNORE INTO category (name) VALUES ?';
+        await connection.query(categorySql, [categories]);
+        console.log('Categories seeded (or already exist).');
 
-        // =========================================
-        // DROP EXISTING TABLES (in reverse dependency order)
-        // =========================================
-        console.log('Dropping existing tables...');
-        await connection.query('DROP TABLE IF EXISTS favourite_rewards;');
-        await connection.query('DROP TABLE IF EXISTS redeemed_rewards;');
-        await connection.query('DROP TABLE IF EXISTS payment;');
-        await connection.query('DROP TABLE IF EXISTS group_payment_status;');
-        await connection.query('DROP TABLE IF EXISTS group_transaction;');
-        await connection.query('DROP TABLE IF EXISTS reward;');
-        await connection.query('DROP TABLE IF EXISTS settings;');
-        await connection.query('DROP TABLE IF EXISTS category;');
-        await connection.query('DROP TABLE IF EXISTS user;');
-        await connection.query('DROP TABLE IF EXISTS `groups`;');
-        console.log('Existing tables dropped.');
 
-        // =========================================
-        // 1. CORE TABLES (No Foreign Key dependencies)
-        // =========================================
+        // --- 2. Seed Rewards ---
+        // We TRUNCATE the table first for a clean seed.
+        // We must disable foreign key checks to truncate.
+        console.log('Truncating reward table for a clean seed...');
+        await connection.query('SET FOREIGN_KEY_CHECKS = 0;');
+        await connection.query('TRUNCATE TABLE reward;');
+        await connection.query('SET FOREIGN_KEY_CHECKS = 1;');
+        console.log('Reward table truncated.');
 
-        // Groups Table
-        await connection.query(`
-            CREATE TABLE \`groups\` (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                name VARCHAR(255) NOT NULL,
-                balance DECIMAL(10, 2) DEFAULT 0.00,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );
-        `);
-        console.log('Table "groups" created.');
+        // Map the reward objects to an array of arrays for the query
+        const rewardData = rewards.map(r => [
+            r.title,
+            r.description,
+            r.cost,
+            r.image_url,
+            r.is_active,
+            r.redemptions,
+            r.categoryId
+        ]);
 
-        // User Table
-        await connection.query(`
-            CREATE TABLE user (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                email VARCHAR(100) NOT NULL UNIQUE,
-                googleId INT UNIQUE,
-                firstName VARCHAR(100) NOT NULL,
-                balance DECIMAL(10, 2) DEFAULT 0.00,
-                password_hash VARCHAR(255) DEFAULT NULL,
-                groupId INT DEFAULT NULL,
-                group_spend DECIMAL(10, 2) DEFAULT 0.00,
-                group_debt DECIMAL(10, 2) DEFAULT 0.00,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (groupId) REFERENCES \`groups\`(id) ON DELETE SET NULL
-            );
-        `);
-        console.log('Table "user" created.');
-
-        // Category Table (referenced by reward)
-        await connection.query(`
-            CREATE TABLE category (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                name VARCHAR(100) NOT NULL UNIQUE
-            );
-        `);
-         console.log('Table "category" created.');
-
-        // =========================================
-        // 2. DEPENDENT TABLES (Has Foreign Keys)
-        // =========================================
-
-        // Reward Table
-        await connection.query(`
-            CREATE TABLE reward (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                title VARCHAR(255) NOT NULL,
-                description TEXT,
-                cost INT NOT NULL,
-                image_url VARCHAR(500),
-                is_active BOOLEAN DEFAULT TRUE,
-                redemptions INT DEFAULT 0,
-                categoryId INT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                FOREIGN KEY (categoryId) REFERENCES category(id) ON DELETE SET NULL
-            );
-        `);
-        console.log(' Table "reward" created.');
+        // Define the columns explicitly
+        const rewardSql = `
+            INSERT INTO reward 
+                (title, description, cost, image_url, is_active, redemptions, categoryId) 
+            VALUES ?
+        `;
         
-        // Settings Table for cashback rate and other global settings
-        await connection.query(`
-            CREATE TABLE settings (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                setting_key VARCHAR(100) NOT NULL UNIQUE,
-                setting_value VARCHAR(255) NOT NULL,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-            );
-        `);
-        console.log('Table "settings" created.');
-        
-        // Insert default cashback rate if not exists
-        await connection.query(`
-            INSERT IGNORE INTO settings (setting_key, setting_value)
-            VALUES ('cashback_rate', '1.0');
-        `);
-        console.log('Default settings initialized.');
+        console.log('Inserting new reward data...');
+        const [result] = await connection.query(rewardSql, [rewardData]);
+        console.log(`✅ Rewards seeded successfully.`);
 
-        // Payment Table
-        // NOTE: removed reference to missing 'payment_history' table for now.
-        // If you need it, create 'payment_history' BEFORE this table.
-        await connection.query(`
-            CREATE TABLE payment (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                userId INT NOT NULL,
-                date DATETIME DEFAULT CURRENT_TIMESTAMP,
-                value INTEGER NOT NULL,
-                paymentAmount DECIMAL(10, 2) NOT NULL,
-                reference VARCHAR(255),
-                FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE
-            );
-        `);
-        console.log('Table "payment" created.');
-
-        // Redeemed Rewards
-        await connection.query(`
-            CREATE TABLE redeemed_rewards (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                userId INT NOT NULL,
-                rewardId INT NOT NULL,
-                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE,
-                FOREIGN KEY (rewardId) REFERENCES reward(id) ON DELETE CASCADE
-            );
-        `);
-        console.log('Table "redeemed_rewards" created.');
-
-        // Favourite Rewards
-        // NOTE: Logic change - usually you favourite a 'reward', not a 'redeemed_reward'
-        await connection.query(`
-            CREATE TABLE favourite_rewards (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                userId INT NOT NULL,
-                rewardId INT NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE,
-                FOREIGN KEY (rewardId) REFERENCES reward(id) ON DELETE CASCADE,
-                UNIQUE KEY unique_fav (userId, rewardId)
-            );
-        `);
-        console.log('Table "favourite_rewards" created.');
-
-        // Group Transactions Table
-        await connection.query(`
-            CREATE TABLE group_transaction (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                userId INT DEFAULT NULL,
-                groupId INT NOT NULL,
-                amount DECIMAL(10, 2) NOT NULL,
-                reference VARCHAR(255),
-                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (userId) REFERENCES user(id) ON DELETE SET NULL,
-                FOREIGN KEY (groupId) REFERENCES \`groups\`(id) ON DELETE CASCADE
-            );
-        `);
-        console.log('Table "group_transaction" created.');
-
-        // Group Payment Status Table
-        // Tracks which users have marked their portion as paid
-        await connection.query(`
-            CREATE TABLE group_payment_status (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                transactionId INT NOT NULL,
-                userId INT NOT NULL,
-                marked_paid BOOLEAN DEFAULT FALSE,
-                marked_at TIMESTAMP NULL DEFAULT NULL,
-                FOREIGN KEY (transactionId) REFERENCES group_transaction(id) ON DELETE CASCADE,
-                FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE,
-                UNIQUE KEY unique_payment_status (transactionId, userId)
-            );
-        `);
-        console.log('Table "group_payment_status" created.');
-
-        console.log('--- Database initialization complete! ---');
-        process.exit(0);
     } catch (error) {
-        console.error(' Error initializing database:', error);
+        console.error('❌ Error seeding data:', error);
         process.exit(1);
     } finally {
-        await connection.end();
+        if (connection) {
+            await connection.end();
+            console.log('Database connection closed.');
+        }
+        process.exit(0);
     }
 }
 
-initDB();
+seedData();

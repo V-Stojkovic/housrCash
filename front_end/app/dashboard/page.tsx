@@ -86,8 +86,8 @@ export default function DashboardPage() {
           ))}
         </div>
       </div> */}
-
-      {/* Recent Activity Section */}
+{/* 
+      Recent Activity Section
       <Card>
         <CardHeader>
           <CardTitle>Recent Activity</CardTitle>
@@ -111,7 +111,7 @@ export default function DashboardPage() {
             </div>
           ))}
         </CardContent>
-      </Card>
+      </Card> */}
     </div>
   );
 };
