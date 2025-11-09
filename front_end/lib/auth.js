@@ -1,5 +1,3 @@
-import { signOut } from 'next-auth/react';
-
 const USER_ID_KEY = 'housr_user_id';
 
 export const loginEndpoint = '/api/v0/user/login';
@@ -148,10 +146,24 @@ export const handleSignUp = async (userData, router, redirectTo = '/') => {
   }
 };
 
-export const handleSignOut = () => {
+export const handleSignOut = async () => {
+  // Call backend logout endpoint
+  try {
+    await fetch(`${BACKEND_BASE}/api/v0/user/logout`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  } catch (error) {
+    console.error('Logout error:', error);
+  }
+
+  // Clear local storage regardless of backend response
   if (typeof window !== 'undefined') {
     localStorage.removeItem(USER_ID_KEY);
     localStorage.removeItem('housr_auth_token');
+    // Redirect to login page
+    window.location.href = '/login';
   }
-  return signOut();
 };

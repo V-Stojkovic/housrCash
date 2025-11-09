@@ -155,4 +155,27 @@ export const getUserBalance = async (
     }
 };
 
+export const logoutUser = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        // Clear the auth-token cookie if it exists
+        res.clearCookie('auth-token', {
+            httpOnly: false,
+            secure: process.env.NODE_ENV === 'production'
+        });
+
+        // Return success response
+        res.status(200).json({
+            success: true,
+            message: 'Logged out successfully'
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
 // You can add more controller functions here, e.g., getUser, deleteUser

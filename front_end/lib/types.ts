@@ -1,7 +1,7 @@
 import { CreditCard, Banknote } from 'lucide-react';
 
 /** Defines the available pages in the app */
-export type Page = 'dashboard' | 'connect' | 'rewards' | 'history';
+export type Page = 'dashboard' | 'groups' | 'rewards' | 'history';
 
 /** Mock data structure for a connected payment method */
 export type ConnectedAccount = {
