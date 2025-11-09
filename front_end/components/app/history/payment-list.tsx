@@ -10,7 +10,7 @@ export const PaymentList: React.FC = () => {
   useEffect(() => {
     const fetchPayments = async () => {
       try {
-        const res = await fetch('/api/v0/payments/history/', {
+        const res = await fetch('/api/v0/payment/paid', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -21,7 +21,7 @@ export const PaymentList: React.FC = () => {
         if (res.ok) {
           console.log(res.status)
           const data = await res.json();
-          setPayments(data);
+          setPayments(data.payments || []);
         } else {
           console.error('Failed to fetch payments');
         }
@@ -48,13 +48,15 @@ export const PaymentList: React.FC = () => {
               <ShoppingCart className="w-5 h-5 text-muted-foreground" />
             </div>
             <div>
-              <div className="font-semibold">{payment.merchant}</div>
+              <div className="font-semibold">{payment.reference}</div>
               <div className="text-sm text-muted-foreground">{new Date(payment.date).toLocaleDateString()}</div>
             </div>
           </div>
           <div className="text-right">
             <div className="font-semibold text-green-600">+{payment.pointsEarned} pts</div>
-            <div className="text-sm text-muted-foreground">-${payment.amount.toFixed(2)}</div>
+            <div className="text-sm text-muted-foreground">
+  -${Number(payment.paymentAmount).toFixed(2)}
+</div>
           </div>
         </li>
       ))}

@@ -44,7 +44,8 @@ export interface UserAuthData extends RowDataPacket {
 export interface paymentHistory extends RowDataPacket {
     id: number,
     paymentAmount : number,
-    reference : string
+    reference : string,
+    pointsEarned: number
 }
 
 
@@ -118,6 +119,7 @@ export const addPayment = async (payment: paymentDTO, transaction?: any): Promis
 }
 
 export const getPayments = async(userId?: number): Promise<paymentHistory[]> => {
+    console.log("userId:", userId);
     let sql = 'SELECT id, userId, paymentAmount, reference, date FROM payment';
     const params: any[] = [];
 

@@ -1,26 +1,13 @@
 import { Router } from 'express';
 import { addCredit, addPayment, cashbackRateTest, getCashBackRate, getId, getPayments } from '../../../../DBHelpers/db_helpers';
+import { authenticateToken } from '../../../middleware/authenticate';
 const dbHelpers: any = require('../../../../DBHelpers/db_helpers'); // dynamic require to avoid changing top imports
 
 
 
 const paymentRouter = Router();
 
-// GET /api/v0/payment/get - Get all payments or filtered by userId
-paymentRouter.get("/history", async (req, res) => {
-    try {
-        const userId = req.query.userId ? Number(req.query.userId) : undefined;
-        const payments = await getPayments(userId);
-        res.json({ success: true, payments });
-    } catch (error) {
-        console.error("Error fetching payments:", error);
-        res.status(500).json({
-            success: false,
-            message: "Failed to fetch payments",
-            error: error instanceof Error ? error.message : error
-        });
-    }
-});
+
 
 paymentRouter.post("/", async (req, res) => {
     const { user_id, reference, amount,  value} = req.body;
@@ -94,6 +81,20 @@ paymentRouter.post("/", async (req, res) => {
         });
     }
 });
-
+// GET /api/v0/payment/get - Get all payments or filtered by userId
+paymentRouter.get("/paid",authenticateToken, async (req, res) => {
+    try {
+        const userId = (req as any).user.userId;
+        const payments = await getPayments(userId);
+        res.json({ success: true, payments });
+    } catch (error) {
+        console.error("Error fetching payments:", error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to fetch payments",
+            error: error instanceof Error ? error.message : error
+        });
+    }
+});
 
 export default paymentRouter;

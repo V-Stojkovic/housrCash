@@ -122,7 +122,8 @@ export const getUserBalance = async (req: Request, res: Response) => {
     try {
         // Get the user ID from the token (set by your auth middleware)
 
-        const userId = req.user
+        const userId = (req as any).user.userId;
+
 
         // Failsafe: if middleware didn't run or failed to set user
         if (!userId) {
