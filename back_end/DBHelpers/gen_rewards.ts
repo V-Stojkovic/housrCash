@@ -35,35 +35,35 @@ const categories = [
  */
 const rewards = [
   {
-    title: '$10 Amazon Gift Card',
-    description: 'A $10 gift card for use on Amazon.com. Code will be emailed upon redemption.',
+    title: '£10 Brewdog Gift Card',
+    description: 'A $10 gift card for use on Brewdog.com. Code will be emailed upon redemption.',
     cost: 1000, // Assuming 1000 points
-    image_url: 'https://via.placeholder.com/300x200.png?text=Amazon+Card',
+    image_url: 'https://via.placeholder.com/300x200.png?text=Brewdog+Card',
     is_active: true,
     redemptions: 55,
     categoryId: 1 // Matches 'Gift Cards'
   },
   {
-    title: 'Company Logo T-Shirt',
-    description: 'A high-quality 100% cotton t-shirt with the company logo. Available in S, M, L, XL.',
+    title: '£25 Papa Johns',
+    description: '£25 Papa Johns voucher redeemable in-store or online.',
     cost: 2500,
-    image_url: 'https://via.placeholder.com/300x200.png?text=Company+T-Shirt',
+    image_url: 'https://via.placeholder.com/300x200.png?text=Papa+Johns',
     is_active: true,
     redemptions: 120,
     categoryId: 2 // Matches 'Merchandise'
   },
   {
-    title: 'Limited Edition Poster (Sold Out)',
-    description: 'A 24x36 poster from our 2023 convention. This item is no longer available.',
+    title: 'MyProtein',
+    description: '£50 voucher for MyProtein products, valid online only.',
     cost: 5000,
-    image_url: 'https://via.placeholder.com/300x200.png?text=Sold+Out+Poster',
+    image_url: 'https://via.placeholder.com/300x200.png?text=MyProtein',
     is_active: false, // Example of an inactive reward
     redemptions: 15,
     categoryId: 2 // Matches 'Merchandise'
   },
   {
-    title: '15% Off Next Purchase',
-    description: 'A one-time-use coupon code for 15% off any single item in our store.',
+    title: '15% Off Next Purchase at New Balance',
+    description: 'A one-time-use coupon code for 15% off any single item at New Balance.',
     cost: 500,
     image_url: 'https://via.placeholder.com/300x200.png?text=15%25+Off+Coupon',
     is_active: true,
@@ -71,32 +71,15 @@ const rewards = [
     categoryId: 3 // Matches 'Discounts'
   },
   {
-    title: 'Exclusive Wallpaper Pack',
-    description: 'A pack of 5 exclusive digital wallpapers for your desktop and mobile devices.',
+    title: 'Spotify Premium - 1 Month Subscription',
+    description: 'Enjoy ad-free music with a one-month subscription to Spotify Premium.',
     cost: 250,
-    image_url: 'https://via.placeholder.com/300x200.png?text=Wallpapers',
+    image_url: 'https://via.placeholder.com/300x200.png?text=Spotify+Premium',
     is_active: true,
     redemptions: 89,
     categoryId: 5 // Matches 'Digital Goods'
   },
-  {
-    title: 'One-Hour Expert Consultation',
-    description: 'A one-hour virtual consultation with one of our top-tier experts.',
-    cost: 10000,
-    image_url: 'https://via.placeholder.com/300x200.png?text=Consultation',
-    is_active: true,
-    redemptions: 8,
-    categoryId: 4 // Matches 'Experiences'
-  },
-  {
-    title: 'Logo Sticker Pack (Uncategorized)',
-    description: 'A pack of 10 high-quality vinyl logo stickers. Ships free.',
-    cost: 300,
-    image_url: 'https://via.placeholder.com/300x200.png?text=Stickers',
-    is_active: true,
-    redemptions: 42,
-    categoryId: null // Example of an uncategorized item
-  }
+  
 ];
 
 

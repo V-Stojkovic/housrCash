@@ -63,7 +63,7 @@ export const createUser = async (userData: CreateUserDTO): Promise<number> => {
     const [result] = await pool.query<ResultSetHeader>(sql, [
         email,
         firstName,
-        password_hash    
+        password_hash
     ]);
 
     // 3. Return the new user's ID

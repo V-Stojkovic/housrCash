@@ -129,11 +129,11 @@ export const DebtBreakdown: React.FC = () => {
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="owe">
           <TrendingDown className="w-4 h-4 mr-2 text-red-600" />
-          You Owe (${totalOwes.toFixed(2)})
+          You Owe (£{totalOwes.toFixed(2)})
         </TabsTrigger>
         <TabsTrigger value="owed">
           <TrendingUp className="w-4 h-4 mr-2 text-green-600" />
-          You&apos;re Owed (${totalOwed.toFixed(2)})
+          You&apos;re Owed (£{totalOwed.toFixed(2)})
         </TabsTrigger>
       </TabsList>
 
@@ -181,7 +181,7 @@ export const DebtBreakdown: React.FC = () => {
                           </div>
                         </div>
                         <div className={`text-lg font-bold ${debt.markedPaid ? 'text-gray-400 line-through' : 'text-red-600'}`}>
-                          ${debt.amount.toFixed(2)}
+                          £{debt.amount.toFixed(2)}
                         </div>
                       </div>
                     </div>
@@ -193,7 +193,7 @@ export const DebtBreakdown: React.FC = () => {
               <div className="mt-4 pt-4 border-t flex justify-between items-center">
                 <div className="font-semibold">Total You Owe</div>
                 <div className="text-xl font-bold text-red-600">
-                  ${totalOwes.toFixed(2)}
+                  £{totalOwes.toFixed(2)}
                 </div>
               </div>
             )}
@@ -222,7 +222,7 @@ export const DebtBreakdown: React.FC = () => {
                       </div>
                     </div>
                     <div className="text-lg font-bold text-green-600">
-                      ${credit.amount.toFixed(2)}
+                      £{credit.amount.toFixed(2)}
                     </div>
                   </li>
                 ))}
@@ -232,7 +232,7 @@ export const DebtBreakdown: React.FC = () => {
               <div className="mt-4 pt-4 border-t flex justify-between items-center">
                 <div className="font-semibold">Total You&apos;re Owed</div>
                 <div className="text-xl font-bold text-green-600">
-                  ${totalOwed.toFixed(2)}
+                  £{totalOwed.toFixed(2)}
                 </div>
               </div>
             )}

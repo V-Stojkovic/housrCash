@@ -52,7 +52,7 @@ export const AddTransactionForm: React.FC<AddTransactionFormProps> = ({ groupId,
 
       if (response.ok && data.success) {
         toast.success('Transaction added!', {
-          description: `$${amountNum.toFixed(2)} split among ${data.data.splitAmong} members`
+          description: `£${amountNum.toFixed(2)} split among ${data.data.splitAmong} members`
         });
         setAmount('');
         setReference('');
@@ -74,7 +74,7 @@ export const AddTransactionForm: React.FC<AddTransactionFormProps> = ({ groupId,
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Field>
-          <FieldLabel htmlFor="amount">Amount ($)</FieldLabel>
+          <FieldLabel htmlFor="amount">Amount (£)</FieldLabel>
           <Input
             id="amount"
             type="number"
