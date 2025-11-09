@@ -1,3 +1,7 @@
+"use client"
+
+import { useState } from "react"
+import { useRouter } from "next/navigation" // Import Next.js router
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -20,6 +24,34 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const router = useRouter(); // Initialize router
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  // Create a wrapper function to handle the async login and redirect
+  async function onLoginClick() {
+    setError("");
+    setLoading(true);
+
+    try {
+        // Assuming handleSignIn in lib/auth.js is updated to accept these args
+        // based on your backend controller it needs: { username, password_string }
+        // Adjusting here to match your likely backend expectations if email is treated as username
+    console.log(`Sigining In...`)
+    const result = await handleSignIn({ username: email, password_string: password }, router, '/');
+
+    if (result && !result.success) {
+      setError(result?.error || "Login failed");
+    }
+    } catch (err) {
+        setError("An unexpected error occurred");
+    } finally {
+        setLoading(false);
+    }
+  }
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -30,7 +62,7 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={(e) => { e.preventDefault(); onLoginClick(); }}>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -39,6 +71,9 @@ export function LoginForm({
                   type="email"
                   placeholder="m@example.com"
                   required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={loading}
                 />
               </Field>
               <Field>
@@ -51,15 +86,27 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" required />
+                <Input
+                    id="password"
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={loading}
+                />
               </Field>
+              {error && (
+                  <p className="text-sm text-red-500">{error}</p>
+              )}
               <Field>
-                <Button type="button" onClick={handleSignIn}>Login</Button>
-                <Button variant="outline" type="button" onClick={handleGoogleSignIn}>
+                <Button type="submit" className="w-full" disabled={loading}>
+                    {loading ? "Logging in..." : "Login"}
+                </Button>
+                <Button variant="outline" type="button" onClick={() => handleGoogleSignIn()} className="w-full" disabled={loading}>
                   Login with Google
                 </Button>
                 <FieldDescription className="text-center">
-                  Don&apos;t have an account? <a href="/signup">Sign up</a>
+                  Don&apos;t have an account? <a href="/signup" className="text-primary hover:underline">Sign up</a>
                 </FieldDescription>
               </Field>
             </FieldGroup>

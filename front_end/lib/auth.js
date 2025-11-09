@@ -1,16 +1,67 @@
-import { signIn, signOut } from 'next-auth/react';
+import { signOut } from 'next-auth/react';
 
 const USER_ID_KEY = 'housr_user_id';
 
-export const loginEndpoint = '/api/v0/login';
-export const handleGoogleSignIn = () => signIn('google');
+export const loginEndpoint = '/api/v0/user/login';
+
+// Backend base url - use NEXT_PUBLIC_BACKEND_URL when available, fallback to localhost:4000
+const BACKEND_BASE = "http://localhost:4000"
+
+export const handleGoogleSignIn = () => {
+  // Redirect the browser to the backend OAuth start endpoint
+  if (typeof window !== 'undefined') {
+    window.location.href = `${BACKEND_BASE}/api/v0/auth/google`;
+  }
+};
+
+// Called on the frontend OAuth landing page to capture token returned by backend
+// processOAuthCallback(router?, redirectTo?)
+// - router: an optional router object with `replace` or `push` (e.g., Next.js useRouter)
+// - redirectTo: path to navigate to after processing (defaults to '/')
+export const processOAuthCallback = (router, redirectTo = '/') => {
+  if (typeof window === 'undefined') return { success: false };
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('token');
+  const userId = params.get('userId') || params.get('user_id');
+
+  if (token) {
+    // store token and userId locally
+    localStorage.setItem('housr_auth_token', token);
+    if (userId) localStorage.setItem(USER_ID_KEY, userId);
+
+    // Optionally remove token from URL
+    const url = new URL(window.location.href);
+    url.searchParams.delete('token');
+    url.searchParams.delete('userId');
+    url.searchParams.delete('user_id');
+    window.history.replaceState({}, document.title, url.pathname + url.hash);
+
+    // Use provided router (Next.js router etc.) if available to navigate client-side
+    try {
+      if (router && typeof router.replace === 'function') {
+        router.replace(redirectTo);
+      } else if (typeof window !== 'undefined') {
+        window.location.replace(redirectTo);
+      }
+    } catch (err) {
+      // fallback to full redirect
+      if (typeof window !== 'undefined') window.location.replace(redirectTo);
+    }
+
+    return { success: true, token, userId };
+  }
+
+  return { success: false };
+};
 
 export const getCurrentUserId = () => {
   if (typeof window === 'undefined') return null;
   return localStorage.getItem(USER_ID_KEY);
 };
 
-export const handleSignIn = async (credentials) => {
+// handleSignIn(credentials, router?, redirectTo?)
+// credentials should match backend expected shape: { username, password_string }
+export const handleSignIn = async (credentials, router, redirectTo = '/') => {
   try {
     const response = await fetch(loginEndpoint, {
       method: 'POST',
@@ -19,18 +70,33 @@ export const handleSignIn = async (credentials) => {
       },
       body: JSON.stringify(credentials),
     });
-    
+
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const text = await response.text();
+      throw new Error(`HTTP error! status: ${response.status} ${text}`);
     }
-    
+
     const data = await response.json();
-    
-    // Save userId to localStorage if it exists in the response
+
+    // Save token and userId to localStorage if present
+    if (data.token) {
+      localStorage.setItem('housr_auth_token', data.token);
+    }
     if (data.userId) {
       localStorage.setItem(USER_ID_KEY, data.userId);
     }
-    
+
+    // If router provided, navigate client-side, otherwise fallback to full redirect
+    try {
+      if (router && typeof router.replace === 'function') {
+        router.replace(redirectTo);
+      } else if (typeof window !== 'undefined') {
+        window.location.replace(redirectTo);
+      }
+    } catch (err) {
+      if (typeof window !== 'undefined') window.location.replace(redirectTo);
+    }
+
     return { success: true, data };
   } catch (error) {
     return { success: false, error: error.message };
@@ -40,6 +106,7 @@ export const handleSignIn = async (credentials) => {
 export const handleSignOut = () => {
   if (typeof window !== 'undefined') {
     localStorage.removeItem(USER_ID_KEY);
+    localStorage.removeItem('housr_auth_token');
   }
   return signOut();
 };

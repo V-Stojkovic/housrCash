@@ -27,7 +27,7 @@ Before you begin, ensure you have met the following requirements:
     * Create a database on your local SQL server
     * Copy the following template and fill in your local database details:
         ```env
-        PORT=3000
+        PORT=4000
         DB_HOST=localhost
         DB_USER=root
         DB_PASSWORD=your_local_password
