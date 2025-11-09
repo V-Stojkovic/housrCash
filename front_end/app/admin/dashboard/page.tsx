@@ -9,7 +9,7 @@ interface Reward {
   id: number;
   title: string;
   description: string;
-  points_required: number;
+  cost: number;
   image_url?: string;
   is_active: boolean;
 }
@@ -28,7 +28,7 @@ export default function AdminDashboard() {
   const [rewardForm, setRewardForm] = useState({
     title: '',
     description: '',
-    points_required: 0,
+    cost: 0,
     image_url: '',
     is_active: true
   });
@@ -39,17 +39,17 @@ export default function AdminDashboard() {
     
     const loadData = async () => {
       try {
-        console.log('Fetching rewards from: http://localhost:4000/api/v0/reward');
+        console.log('Fetching rewards from: /api/v0/reward');
         // Fetch rewards
-        const rewardsRes = await fetch('http://localhost:4000/api/v0/reward');
+        const rewardsRes = await fetch('/api/v0/reward');
         console.log('Rewards response status:', rewardsRes.status);
         
         const rewardsData = await rewardsRes.json();
         console.log('Rewards data received:', rewardsData);
         
-        console.log('Fetching settings from: http://localhost:4000/api/v0/settings/cashback-rate');
+        console.log('Fetching settings from: /api/v0/settings/cashback-rate');
         // Fetch settings
-        const settingsRes = await fetch('http://localhost:4000/api/v0/settings/cashback-rate');
+        const settingsRes = await fetch('/api/v0/settings/cashback-rate');
         console.log('Settings response status:', settingsRes.status);
         
         const settingsData = await settingsRes.json();
@@ -61,7 +61,7 @@ export default function AdminDashboard() {
             id: r.id,
             title: r.title,
             description: r.description,
-            points_required: r.points_required,
+            cost: r.cost,
             image_url: r.image_url,
             is_active: Boolean(r.is_active)
           }));
@@ -96,9 +96,9 @@ export default function AdminDashboard() {
     
     setSaveStatus('Saving...');
     try {
-      console.log('Sending PUT request to: http://localhost:4000/api/v0/settings/cashback-rate');
+      console.log('Sending PUT request to: /api/v0/settings/cashback-rate');
       
-      const response = await fetch('http://localhost:4000/api/v0/settings/cashback-rate', {
+      const response = await fetch('/api/v0/settings/cashback-rate', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ cashback_rate: settings.cashback_rate })
@@ -131,10 +131,10 @@ export default function AdminDashboard() {
     
     setSaveStatus('Creating...');
     try {
-      console.log('Sending POST request to: http://localhost:4000/api/v0/reward');
+      console.log('Sending POST request to: /api/v0/reward');
       console.log('Request body:', JSON.stringify(rewardForm, null, 2));
       
-      const response = await fetch('http://localhost:4000/api/v0/reward', {
+      const response = await fetch('/api/v0/reward', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(rewardForm)
@@ -161,7 +161,7 @@ export default function AdminDashboard() {
         
         // Reset form
         console.log('Resetting form...');
-        setRewardForm({ title: '', description: '', points_required: 0, image_url: '', is_active: true });
+        setRewardForm({ title: '', description: '', cost: 0, image_url: '', is_active: true });
         setSaveStatus('Reward created!');
       } else {
         console.error('Create reward failed:', data.message);
@@ -186,15 +186,15 @@ export default function AdminDashboard() {
       const updateData = {
         title: reward.title,
         description: reward.description,
-        points_required: reward.points_required,
+        cost: reward.cost,
         image_url: reward.image_url,
         is_active: reward.is_active
       };
       
-      console.log('Sending PUT request to:', `http://localhost:4000/api/v0/reward/${reward.id}`);
+      console.log('Sending PUT request to:', `/api/v0/reward/${reward.id}`);
       console.log('Request body:', updateData);
       
-      const response = await fetch(`http://localhost:4000/api/v0/reward/${reward.id}`, {
+      const response = await fetch(`/api/v0/reward/${reward.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updateData)
@@ -297,8 +297,8 @@ export default function AdminDashboard() {
                     <label className="text-sm font-medium text-foreground">Points Required</label>
                     <input
                       type="number"
-                      value={rewardForm.points_required}
-                      onChange={(e) => setRewardForm({ ...rewardForm, points_required: Number(e.target.value) })}
+                      value={rewardForm.cost}
+                      onChange={(e) => setRewardForm({ ...rewardForm, cost: Number(e.target.value) })}
                       placeholder="500"
                       className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground"
                     />
@@ -369,7 +369,7 @@ export default function AdminDashboard() {
                             </span>
                           </div>
                           <p className="text-sm text-muted-foreground">{reward.description}</p>
-                          <p className="text-sm font-medium text-primary mt-1">{reward.points_required} points</p>
+                          <p className="text-sm font-medium text-primary mt-1">{reward.cost} points</p>
                         </div>
                         <div className="flex gap-2">
                           <Button

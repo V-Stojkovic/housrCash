@@ -89,29 +89,29 @@ router.post('/', async (req: Request, res: Response) => {
     console.log('Request body:', req.body);
     
     try {
-        const { title, description, points_required, image_url, is_active } = req.body;
+        const { title, description, cost, image_url, is_active } = req.body;
         
         console.log('Extracted fields:', {
             title,
             description,
-            points_required,
+            cost,
             image_url,
             is_active
         });
         
         // Validation
-        if (!title || !points_required) {
+        if (!title || !cost) {
             console.log('Validation failed - missing required fields');
             return res.status(400).json({
                 success: false,
-                message: 'Title and points_required are required'
+                message: 'Title and cost are required'
             });
         }
         
         const queryParams = [
             title, 
             description || null, 
-            points_required, 
+            cost, 
             image_url || null, 
             is_active !== undefined ? is_active : true
         ];
@@ -119,7 +119,7 @@ router.post('/', async (req: Request, res: Response) => {
         console.log('Executing INSERT with params:', queryParams);
         
         const [result] = await pool.query<ResultSetHeader>(
-            `INSERT INTO reward (title, description, points_required, image_url, is_active)
+            `INSERT INTO reward (title, description, cost, image_url, is_active)
              VALUES (?, ?, ?, ?, ?)`,
             queryParams
         );
@@ -164,7 +164,7 @@ router.put('/:id', async (req: Request, res: Response) => {
     
     try {
         const { id } = req.params;
-        const { title, description, points_required, image_url, is_active } = req.body;
+        const { title, description, cost, image_url, is_active } = req.body;
         
         // Check if reward exists
         console.log('Checking if reward exists...');
@@ -195,9 +195,9 @@ router.put('/:id', async (req: Request, res: Response) => {
             updates.push('description = ?');
             values.push(description);
         }
-        if (points_required !== undefined) {
-            updates.push('points_required = ?');
-            values.push(points_required);
+        if (cost !== undefined) {
+            updates.push('cost = ?');
+            values.push(cost);
         }
         if (image_url !== undefined) {
             updates.push('image_url = ?');

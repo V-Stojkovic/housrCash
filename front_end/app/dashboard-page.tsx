@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardTitle, CardHeader, CardContent, CardDescription } from '@/components/ui/card';
 import { Gift, ShoppingCart, Award } from 'lucide-react';
 import { MOCK_BALANCE, MOCK_PAYMENTS, MOCK_REDEMPTIONS, MOCK_REWARDS } from '@/lib/mock-data';
-import { RewardCard } from '../rewards/reward-card';
+import { RewardCard } from '@/components/app/rewards/reward-card';
 
 export const DashboardPage: React.FC = () => {
   const totalPoints = MOCK_BALANCE;

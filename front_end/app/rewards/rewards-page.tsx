@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { RewardCard } from '@/components/app/rewards/reward-card';
 import { Reward } from '@/lib/types';
 
-export const RewardsPage: React.FC = () => {
+const RewardsPage: React.FC = () => {
   const [rewards, setRewards] = useState<Reward[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -75,3 +75,5 @@ export const RewardsPage: React.FC = () => {
     </div>
   );
 };
+
+export default RewardsPage;
