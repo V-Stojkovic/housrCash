@@ -111,8 +111,7 @@ export const authUser = async (
         })
         .json({
             message: 'Authentication successful',
-            userId: user.id,
-            token
+            userId: user.id
         });
 
     } catch (error) {

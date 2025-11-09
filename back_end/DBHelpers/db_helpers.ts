@@ -28,16 +28,27 @@ interface IdResult extends RowDataPacket {
 }
 
 interface paymentDTO{
-    username:string,
+    userId:number,
     reference:string,
-    timestamp:number
+    paymentAmount:number,
 
+}
+
+interface addCredit{
+    userId:number,
+    amount:number
 }
 export interface UserAuthData extends RowDataPacket {
     id: number;
     username: string;
     password_hash: string;
     // salt: string; // Not needed if using bcrypt, it's built into the hash
+}
+
+export interface paymentHistory extends RowDataPacket {
+    id: number,
+    paymentAmount : number,
+    reference : string
 }
 
 
@@ -102,7 +113,72 @@ export const getUserByGoogleId = async (googleId: string | number) : Promise<{id
 //=================================
 // Payments
 //=================================
-export const addPayment = async (payment : paymentDTO):Promise<number> => {
-    const sql = 'INSERT '
-    return 0;
+export const addPayment = async (payment: paymentDTO, transaction?: any): Promise<any> => {
+    const { userId, reference, paymentAmount } = payment;
+
+    if (userId === null) {
+        throw new Error('User not found');
+    }
+
+    const sql = 'INSERT INTO payment (userId, reference, paymentAmount, date) VALUES (?, ?, ?, NOW())';
+    const queryMethod = transaction ? transaction.query.bind(transaction) : pool.query.bind(pool);
+    const [result] = await queryMethod(sql, [userId, reference, paymentAmount]);
+
+    return {
+        id: result.insertId,
+        userId,
+        reference,
+        paymentAmount,
+        date: new Date()
+    };
+}
+
+export const getPayments = async(userId?: number): Promise<paymentHistory[]> => {
+    let sql = 'SELECT id, userId, paymentAmount, reference, date FROM payment';
+    const params: any[] = [];
+    
+    if (userId !== undefined) {
+        sql += ' WHERE userId = ?';
+        params.push(userId);
+    }
+    
+    sql += ' ORDER BY date DESC';
+    const [rows] = await pool.query<paymentHistory[]>(sql, params);
+    return rows;
+}
+
+export const deletePayment = async(paymentId: number, transaction?: any): Promise<boolean> => {
+    const queryMethod = transaction ? transaction.query.bind(transaction) : pool.query.bind(pool);
+    const sql = 'DELETE FROM payment WHERE id = ?';
+    const [result] = await queryMethod(sql, [paymentId]);
+    return (result as ResultSetHeader).affectedRows > 0;
+}
+/**
+ * This method adds credit.amount to the user's current balance
+ * @param credit
+ * @returns The new balance of the user
+ */
+export const addCredit = async (credit: addCredit, transaction?: any): Promise<number> => {
+    const { userId, amount } = credit;
+    const queryMethod = transaction ? transaction.query.bind(transaction) : pool.query.bind(pool);
+
+    // Update the user's balance by adding the specified amount
+    const sql = 'UPDATE user SET balance = balance + ? WHERE id = ?';
+    await queryMethod(sql, [amount, userId]);
+
+    // Retrieve the new balance
+    const [rows] = await queryMethod(`SELECT balance FROM user WHERE id = ?`, [userId]);
+    return rows.length > 0 ? rows[0].balance : 0;
+}
+
+export const getCashBackRate = async(): Promise<string> => {
+    const sql = 'SELECT setting_value FROM settings WHERE setting_key = ?';
+    const [rows] = await pool.query<RowDataPacket[]>(sql, ['cashback_rate']);
+    return rows[0]?.setting_value ?? '1.0'; // Default to 1.0 if not found
+}
+
+export const setCashBackRate = async(newRate :number):Promise<void> => {
+    const sql = 'UPDATE settings SET value = ? WHERE key = "cashback_rate"';
+    await pool.query<ResultSetHeader>(sql,[newRate]);
+
 }

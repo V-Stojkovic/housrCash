@@ -7,5 +7,10 @@ redeemRouter.get("/:reward_id", (req, res) => {
     // You need to do database stuff
     res.status(200).json({ success: true, message: "Redeem endpoint is working!" });
 });
+redeemRouter.get("/get", (req, res) => {
+    // Placeholder logic for redeem endpoint
+    // You need to do database stuff
+    res.status(200).json({ success: true, message: "Redeem endpoint is working!" });
+});
 
 export default redeemRouter;

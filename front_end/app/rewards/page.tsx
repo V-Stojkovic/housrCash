@@ -1,2 +1,2 @@
-import RewardsPage from "./rewards-page";
+import { RewardsPage } from "./rewards-page";
 export default RewardsPage;
