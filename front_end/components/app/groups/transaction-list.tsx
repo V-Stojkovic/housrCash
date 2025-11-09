@@ -140,7 +140,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({ groupId, onUpd
               </div>
               <div className="flex items-center gap-4">
                 <div className="text-right">
-                  <div className="font-bold text-lg">${transaction.amount.toFixed(2)}</div>
+                  <div className="font-bold text-lg">£{transaction.amount.toFixed(2)}</div>
                   <div className="text-xs text-green-600">Open</div>
                 </div>
                 {transaction.userId === currentUserId && (

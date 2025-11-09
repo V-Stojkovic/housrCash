@@ -60,7 +60,7 @@ export const GroupDashboard: React.FC<GroupDashboardProps> = ({ groupData, onUpd
 
     if (groupData.userStats.group_debt > 0) {
       toast.error('Cannot leave group', {
-        description: `You have $${groupData.userStats.group_debt.toFixed(2)} in outstanding debt`
+        description: `You have £${groupData.userStats.group_debt.toFixed(2)} in outstanding debt`
       });
       return;
     }
@@ -120,7 +120,7 @@ export const GroupDashboard: React.FC<GroupDashboardProps> = ({ groupData, onUpd
             <DollarSign className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${groupData.group.balance.toFixed(2)}</div>
+            <div className="text-2xl font-bold">£{groupData.group.balance.toFixed(2)}</div>
             <p className="text-xs text-muted-foreground">Total outstanding</p>
           </CardContent>
         </Card>
@@ -132,7 +132,7 @@ export const GroupDashboard: React.FC<GroupDashboardProps> = ({ groupData, onUpd
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              ${groupData.userStats.totalOwed.toFixed(2)}
+              £{groupData.userStats.totalOwed.toFixed(2)}
             </div>
             <p className="text-xs text-muted-foreground">From group members</p>
           </CardContent>
@@ -145,7 +145,7 @@ export const GroupDashboard: React.FC<GroupDashboardProps> = ({ groupData, onUpd
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-600">
-              ${groupData.userStats.totalOwes.toFixed(2)}
+              £{groupData.userStats.totalOwes.toFixed(2)}
             </div>
             <p className="text-xs text-muted-foreground">To group members</p>
           </CardContent>
@@ -199,8 +199,8 @@ export const GroupDashboard: React.FC<GroupDashboardProps> = ({ groupData, onUpd
                       </div>
                     </div>
                     <div className="text-right text-sm">
-                      <div className="text-green-600">Owed: ${member.group_spend.toFixed(2)}</div>
-                      <div className="text-red-600">Owes: ${member.group_debt.toFixed(2)}</div>
+                      <div className="text-green-600">Owed: £{member.group_spend.toFixed(2)}</div>
+                      <div className="text-red-600">Owes: £{member.group_debt.toFixed(2)}</div>
                     </div>
                   </li>
                 ))}
@@ -232,7 +232,7 @@ export const GroupDashboard: React.FC<GroupDashboardProps> = ({ groupData, onUpd
           </Button>
           {groupData.userStats.group_debt > 0 && (
             <p className="text-sm text-red-600 mt-2 text-center">
-              You must settle your debt of ${groupData.userStats.group_debt.toFixed(2)} before leaving
+              You must settle your debt of £{groupData.userStats.group_debt.toFixed(2)} before leaving
             </p>
           )}
         </CardContent>
